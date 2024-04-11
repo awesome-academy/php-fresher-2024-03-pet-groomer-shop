@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class HotelService extends Model
+{
+    use HasFactory;
+
+    protected $primaryKey = 'hotel_service_id';
+    protected $table = 'hotel_services';
+}
