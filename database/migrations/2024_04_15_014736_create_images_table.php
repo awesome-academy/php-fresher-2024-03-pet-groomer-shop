@@ -28,8 +28,6 @@ class CreateImagesTable extends Migration
      */
     public function down()
     {
-        Schema::table('images', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('images');
     }
 }
