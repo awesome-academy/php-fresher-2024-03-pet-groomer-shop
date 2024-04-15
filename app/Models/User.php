@@ -3,6 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -38,5 +42,61 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'is_admin' => 'boolean',
     ];
+
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class, 'role_id', 'role_id');
+    }
+
+    public function pets(): HasMany
+    {
+        return $this->hasMany(Pet::class, 'user_id', 'user_id');
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class, 'branch_id', 'branch_id');
+    }
+
+    public function careOrders(): HasMany
+    {
+        return $this->hasMany(CareOrder::class, 'user_id', 'user_id');
+    }
+
+    public function assignTask(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            CareOrder::class,
+            'assign_task',
+            'user_id',
+            'order_id'
+        )->withPivot(['from_time', 'to_time'])->withTimestamps();
+    }
+
+    public function coupons(): HasMany
+    {
+        return $this->hasMany(Coupon::class, 'created_by', 'user_id');
+    }
+
+    public function petServices(): HasMany
+    {
+        return $this->hasMany(PetService::class, 'created_by', 'user_id');
+    }
+
+    public function petServicesPrices(): HasMany
+    {
+        return $this->hasMany(PetServicePrice::class, 'created_by', 'user_id');
+    }
+
+    public function breeds(): HasMany
+    {
+        return $this->hasMany(Breed::class, 'created_by', 'user_id');
+    }
+
+    public function image(): MorphOne
+    {
+        return $this->morphOne(Image::class, 'imageable');
+    }
 }

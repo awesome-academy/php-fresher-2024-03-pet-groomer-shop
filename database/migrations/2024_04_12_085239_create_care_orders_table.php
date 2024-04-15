@@ -24,7 +24,7 @@ class CreateCareOrdersTable extends Migration
             $table->decimal('order_hotel_price', 12, 2)->nullable();
             $table->timestamps();
 
-            $table->unsignedBigInteger('coupon_id');
+            $table->unsignedBigInteger('coupon_id')->nullable();
             $table->foreign('coupon_id')->references('coupon_id')->on('coupons');
             $table->unsignedBigInteger('branch_id');
             $table->foreign('branch_id')->references('branch_id')->on('branches');
