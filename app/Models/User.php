@@ -52,6 +52,12 @@ class User extends Authenticatable
         'full_name',
     ];
 
+    // Override default attribute (password -> user_password in the method Authenticatable trait)
+    public function getAuthPassword()
+    {
+        return $this->user_password;
+    }
+
     // Global scope
     protected static function booted()
     {
