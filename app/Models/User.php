@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 
 class User extends Authenticatable
@@ -122,6 +123,13 @@ class User extends Authenticatable
     public function getFullNameAttribute(): string
     {
         return $this->user_first_name . ' ' . $this->user_last_name;
+    }
+
+    public function getGenderNameAttribute(): string
+    {
+        $checkGender = Config::get('constant.gender');
+
+        return $checkGender[$this->gender];
     }
 
     public function setUsernameAttribute($value)
