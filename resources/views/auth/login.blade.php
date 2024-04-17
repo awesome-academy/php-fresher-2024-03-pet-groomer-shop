@@ -38,7 +38,7 @@
                         class="rounded border-gray-300 text-indigo-600
                          shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                         name="remember">
-                    <span class="ml-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
+                    <span class="ml-2 text-sm text-gray-600">{{ __('Remember Me') }}</span>
                 </label>
             </div>
 
@@ -46,7 +46,7 @@
                 @if (Route::has('password.request'))
                     <a class="underline text-sm text-gray-600 hover:text-gray-900"
                         href="{{ route('password.request') }}">
-                        {{ __('Forgot your password?') }}
+                        {{ __('Forgot Your Password?') }}
                     </a>
                 @endif
 
