@@ -1,6 +1,9 @@
-require('./bootstrap');
+require("./bootstrap");
 
-import Alpine from 'alpinejs';
+import Alpine from "alpinejs";
+import $ from "jquery";
+
+window.$ = window.jQuery = $;
 
 window.Alpine = Alpine;
 
