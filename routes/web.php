@@ -19,11 +19,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LandingPageController::class, 'landingPage']);
 
+
+
 Route::get('/dashboard', [DashboardController::class, 'dashboard'])
     ->middleware(['auth'])
     ->name('dashboard');
 
-Route::resource('user', UserController::class)->names('user');
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::resource('user', UserController::class)->names('user');
+});
 
 Route::get('/pet', [PetController::class, 'index'])->name('pet.index');
 
