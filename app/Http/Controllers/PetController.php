@@ -23,7 +23,7 @@ class PetController extends Controller
      */
     public function create()
     {
-        //
+        return view('pet.create');
     }
 
     /**
@@ -45,7 +45,7 @@ class PetController extends Controller
      */
     public function show($id)
     {
-        //
+        return view('pet.show');
     }
 
     /**

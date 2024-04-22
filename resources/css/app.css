@@ -1,3 +1,57 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .btn {
+        @apply py-2 px-4 rounded text-white font-semibold cursor-pointer;
+        /* Common styles */
+        transition: all 0.3s ease;
+    }
+
+    /* Primary Button */
+    .btn-primary {
+        @apply bg-blue-500 hover:bg-blue-600;
+    }
+
+    /* Secondary Button */
+    .btn-secondary {
+        @apply bg-gray-500 hover:bg-gray-600;
+    }
+
+    /* Success Button */
+    .btn-success {
+        @apply bg-green-500 hover:bg-green-600;
+    }
+
+    /* Danger Button */
+    .btn-danger {
+        @apply bg-red-500 hover:bg-red-600;
+    }
+
+    /* Warning Button */
+    .btn-warning {
+        @apply bg-yellow-500 hover:bg-yellow-600;
+    }
+
+    /* Small Button */
+    .btn-sm {
+        @apply py-1 px-3 text-sm;
+    }
+
+    /* Large Button */
+    .btn-lg {
+        @apply py-3 px-6 text-lg;
+    }
+
+    .btn-outline {
+        @apply border border-gray-500 text-gray-500 hover:text-gray-700;
+        background-color: transparent;
+    }
+
+    .btn-text {
+        @apply text-blue-500 hover:text-blue-600 p-0;
+        background-color: transparent;
+        border: none;
+    }
+}

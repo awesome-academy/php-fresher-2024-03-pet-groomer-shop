@@ -16,5 +16,11 @@ return [
         'active' => 1,
         'inactive' => 0,
     ],
+    'pet_type' => [
+        '0' => 'Cat',
+        '1' => 'Dog',
+        '2' => 'Bird',
+        '3' => 'Other',
+    ],
 
 ];
