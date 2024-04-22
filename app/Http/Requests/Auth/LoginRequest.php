@@ -29,8 +29,8 @@ class LoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
+            'user_email' => ['required', 'string', 'email'],
+            'user_password' => ['required', 'string'],
         ];
     }
 
@@ -45,7 +45,15 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        $credentials = [
+            'user_email' => $this->input('user_email'),
+
+            // use password field because the \Illuminate\Auth\EloquentUserProvider
+            // using $credentials['password']; to check;
+            'password' => $this->input('user_password'),
+        ];
+
+        if (!Auth::attempt($credentials, $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -65,7 +73,7 @@ class LoginRequest extends FormRequest
      */
     public function ensureIsNotRateLimited()
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        if (!RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
             return;
         }
 
