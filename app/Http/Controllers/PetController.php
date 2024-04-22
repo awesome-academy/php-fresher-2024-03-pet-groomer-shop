@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\PetRequest;
+use Exception;
+use Illuminate\Support\Facades\DB;
 
 class PetController extends Controller
 {
@@ -26,15 +28,19 @@ class PetController extends Controller
         return view('pet.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function store(PetRequest $request, int $userID)
     {
-        //
+        try {
+            $data = $request->except('_token');
+            $data['user_id'] = $userID;
+            $data['is_active'] = $request->has('is_active') ? 1 : 0;
+
+            DB::table('pets')->insert($data);
+
+            return redirect()->route('user.show', $userID)->with('success', __('Pet created successfully'));
+        } catch (Exception $exception) {
+            return redirect()->route('user.show', $userID)->with('error', $exception->getMessage());
+        }
     }
 
     /**
@@ -66,9 +72,18 @@ class PetController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(PetRequest $request, $id, $userID)
     {
-        //
+        try {
+            $data = $request->except(['_token', '_method']);
+
+            $data['is_active'] = $request->has('is_active') ? 1 : 0;
+            DB::table('pets')->where('pet_id', $id)->update($data);
+
+            return redirect()->route('user.show', $userID)->with('success', __('Pet updated successfully'));
+        } catch (Exception $exception) {
+            return redirect()->route('user.show', $userID)->with('error', $exception->getMessage());
+        }
     }
 
     /**
@@ -77,8 +92,14 @@ class PetController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id, $userID)
     {
-        //
+        try {
+            DB::table('pets')->where('pet_id', $id)->delete();
+
+            return redirect()->route('user.show', $userID)->with('success', __('Pet deleted successfully'));
+        } catch (Exception $exception) {
+            return redirect()->route('user.show', $userID)->with('error', $exception->getMessage());
+        }
     }
 }

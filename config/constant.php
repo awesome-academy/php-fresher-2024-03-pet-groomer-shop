@@ -19,8 +19,9 @@ return [
     'pet_type' => [
         '0' => 'Cat',
         '1' => 'Dog',
-        '2' => 'Bird',
-        '3' => 'Other',
+        '2' => 'Hamster',
+        '3' => 'Bird',
+        '4' => 'Other',
     ],
 
 ];

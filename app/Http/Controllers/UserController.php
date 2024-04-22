@@ -2,11 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\RoleEnum;
+use App\Http\Requests\UserRequest;
 use App\Models\Branch;
 use App\Models\Breed;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Http\Request;
+use App\Scopes\ActiveUserScope;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
 class UserController extends Controller
@@ -18,7 +24,7 @@ class UserController extends Controller
      */
     public function index(): View
     {
-        $users = User::all();
+        $users = User::withoutGlobalScope(ActiveUserScope::class)->paginate(10);
 
         return view(
             'user.index',
@@ -38,28 +44,30 @@ class UserController extends Controller
         return view('user.create', ['roles' => $roles, 'branches' => $branches]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
-        //
+        try {
+            $user = new User();
+            $user->fill($request->all());
+            $user->is_active  = $request->has('is_active') ? 1 : 0;
+            $user->user_password = Hash::make($request->user_password);
+
+            if ($request->role_id === RoleEnum::ADMIN) {
+                $user->is_admin = 1;
+            }
+
+            $user->save();
+
+            return redirect()->route('user.index')->with('success', __('User created successfully'));
+        } catch (Exception $e) {
+            return redirect()->route('user.create')->with('error', $e->getMessage());
+        }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param int $id The ID of the user to be displayed
-     * @return \Illuminate\Contracts\View\View|\Illuminate\Http\Response The view for the user's details, or a 404 error if the user is not found
-     */
     public function show($id)
     {
         [$roles, $branches, $breeds] = $this->getOptions();
-
-        $user = User::find($id)->with('pets')->first();
+        $user = User::with('pets')->withoutGlobalScope(ActiveUserScope::class)->findOrFail($id);
         if ($user === null) {
             return abort(404);
         }
@@ -67,38 +75,52 @@ class UserController extends Controller
         return view('user.show', ['user' => $user, 'roles' => $roles, 'branches' => $branches, 'breeds' => $breeds]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function update(UserRequest $request, $id)
     {
-        //
+        try {
+            $data = $request->except(['user_email', 'username', 'user_password']);
+            $user = User::getUserByID($id);
+            $user->fill($data);
+            $user->is_active  = $request->has('is_active') ? 1 : 0;
+
+            if ($user->role_id === RoleEnum::ADMIN) {
+                $user->is_admin = 1;
+            } else {
+                $user->is_admin = 0;
+            }
+
+            // can't change admin role if you are admin and you are update yourself
+            if (Auth::user()->user_id === $id && Auth::user()->role_id === RoleEnum::ADMIN) {
+                $user->role_id = 1;
+            }
+
+            $user->save();
+
+            return redirect()->route('user.show', ['user' => $id])->with('success', __('User updated successfully'));
+        } catch (Exception $e) {
+            return redirect()->route('user.show', ['user' => $id])->with('error', $e->getMessage());
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        //
+        try {
+            $user = User::withoutGlobalScope(ActiveUserScope::class)->findOrFail($id);
+            if (Auth::user()->user_id === $user->user_id) {
+                return redirect()->route('user.index')->with('error', __('You cannot delete yourself'));
+            }
+
+            $user->delete();
+
+            return redirect()->route('user.index')->with('success', __('User deleted successfully'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('user.index')->with('error', $e->getMessage());
+        }
     }
 
     private function getOptions()
