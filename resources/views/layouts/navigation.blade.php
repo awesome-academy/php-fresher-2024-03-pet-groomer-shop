@@ -16,25 +16,35 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </div>
-                <div class="hidden space-x-8  sm:-my-px sm:ml-10  sm:flex">
-                    <x-nav-link :href="route('language.set', ['lang' => 'vi'])" :active="App::getLocale() == 'vi'">
-                        {{ __('VI') }}
-                    </x-nav-link>
-                </div>
-                <div class="hidden space-x-8  sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :active="App::getLocale() == 'en'" :href="route('language.set', ['lang' => 'en'])">
-                        {{ __('EN') }}
-                    </x-nav-link>
-                </div>
+                @admin
+                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                        <x-nav-link :href="route('user.index')" :active="request()->routeIs('user.index')">
+                            {{ __('User') }}
+                        </x-nav-link>
+                    </div>
+                @endadmin
             </div>
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ml-6">
+                <div class="flex items-center gap-2 mr-2">
+                    <a href="{{ route('language.set', ['lang' => 'vi']) }}">
+                        <img class="w-5" src="https://purecatamphetamine.github.io/country-flag-icons/3x2/VN.svg"
+                            alt="Vietnam flag">
+                    </a>
+                    <a href="{{ route('language.set', ['lang' => 'en']) }}">
+                        <img class="w-5" src="https://purecatamphetamine.github.io/country-flag-icons/3x2/GB.svg"
+                            alt="Great Britain flag">
+                    </a>
+                </div>
+
+
+
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button
                             class="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">
-                            <div>{{ Auth::user()->name }}</div>
+                            <div>{{ Auth::user()->username }}</div>
 
                             <div class="ml-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
