@@ -34,13 +34,13 @@ Route::get('/pet', [PetController::class, 'index'])->name('pet.index');
 
 Route::get('/pet/create', [PetController::class, 'create'])->name('pet.create');
 
-Route::post('/pet/store', [PetController::class, 'store'])->name('pet.store');
+Route::post('/pet/store/{user}', [PetController::class, 'store'])->name('pet.store');
 
 Route::get('/pet/{id}/edit', [PetController::class, 'edit'])->name('pet.edit');
 
-Route::put('/pet/{id}/update', [PetController::class, 'update'])->name('pet.update');
+Route::put('/pet/{id}/update/{user}', [PetController::class, 'update'])->name('pet.update');
 
-Route::delete('/pet/{id}/delete', [PetController::class, 'delete'])->name('pet.delete');
+Route::delete('/pet/{id}/delete/{user}', [PetController::class, 'destroy'])->name('pet.delete');
 
 
 Route::get('language/{lang}', [LanguageController::class, 'setLanguage'])->name('language.set');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\RoleEnum;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
@@ -50,7 +51,7 @@ class RegisteredUserController extends Controller
             'user_gender' => $request->user_gender,
             'user_password' => Hash::make($request->user_password),
             'username' => $request->username,
-            'role_id' => Config::get('constant.roles.customer'),
+            'role_id' => RoleEnum::CUSTOMER,
             'is_active' => Config::get('constant.status.active'),
         ]);
 

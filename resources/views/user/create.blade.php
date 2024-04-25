@@ -22,6 +22,10 @@
                     md:grid grid-cols-12 gap-2 md:gap-4"
                         action="{{ route('user.store') }}">
                         @csrf
+                        <div class="col-span-12">
+
+                            <x-auth-validation-errors class="mb-4" :errors="$errors" />
+                        </div>
 
                         <!-- First Name -->
                         <div class="col-span-6">
@@ -106,7 +110,7 @@
                             <x-label for="birthdate" required :value="__('Birthdate')" />
 
                             <x-input id="birthdate" class="block mt-1 w-full" type="date" name="user_birthdate"
-                                :value="old('user_birthdate')" required autofocus />
+                                :value="old('user_birthdate')" autofocus />
                         </div>
 
                         <div class="mt-4 col-span-6">
@@ -134,14 +138,19 @@
                         <div class="mt-4 col-span-6">
                             <x-label for="branch" required :value="__('Branch')" />
 
-                            <x-select id="branch" class="block mt-1 w-full" name="brach_id" :options="$branches"
+                            <x-select id="branch" class="block mt-1 w-full" name="branch_id" :options="$branches"
                                 :value="old('branch_id')" required autofocus />
                         </div>
 
+                        <div class="col-span-6">
+                            <x-label class="mb-4" required for="is_active" :value="__('Is Active')" />
+                            <div class="flex w-5 h-5">
+                                <x-input id="is_active" checked class="block mt-1 w-full" type="checkbox"
+                                    name="is_active" :value="old('is_active')" />
+                            </div>
+                        </div>
 
                         <div class="col-span-12 flex items-center justify-end mt-4">
-
-
                             <x-button class="ml-4">
                                 {{ __('Create') }}
                             </x-button>

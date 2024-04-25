@@ -142,4 +142,9 @@ class User extends Authenticatable
     {
         $this->attributes['username'] = Str::slug($value, '-');
     }
+
+    public static function getUserByID($id)
+    {
+        return self::withoutGlobalScope(ActiveUserScope::class)->findOrFail($id);
+    }
 }

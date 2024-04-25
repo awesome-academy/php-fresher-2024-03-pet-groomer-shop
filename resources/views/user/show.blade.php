@@ -4,7 +4,7 @@
         ['text' => trans('User'), 'url' => route('user.index')],
         ['text' => trans('User Detail'), 'url' => route('user.show', ['user' => $user->user_id])],
     ];
-    
+
 @endphp
 
 <x-app-layout>
@@ -17,7 +17,13 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
-                    <form method="POST" class="w-full grid grid-cols-12 gap-4" action="{{ route('user.store') }}">
+                    <div class="my-3">
+                        <x-alert-session />
+                    </div>
+                    <x-auth-validation-errors class="mb-4" :errors="$errors" />
+                    <form method="POST" class="w-full grid grid-cols-12 gap-4"
+                        action="{{ route('user.update', ['user' => $user->user_id]) }}">
+                        @method('PUT')
                         @csrf
 
                         <!-- First Name -->
@@ -85,7 +91,7 @@
                             <x-label for="phoneNumber" :value="__('Phone Number')" />
 
                             <x-input id="phoneNumber" :value="$user->user_phone_number" class="block mt-1 w-full"
-                                name="user_phone_number" type="text" required autofocus />
+                                name="user_phone_number" type="text" autofocus />
                         </div>
 
                         <!-- Address -->
@@ -93,7 +99,7 @@
                             <x-label for="address" :value="__('Address')" />
 
                             <x-input id="address" :value="$user->user_address" class="block mt-1 w-full" type="text"
-                                name="user_address" required autofocus />
+                                name="user_address" autofocus />
                         </div>
 
                         <!-- Birthdate -->
@@ -101,23 +107,33 @@
                             <x-label for="birthdate" :value="__('Birthdate')" />
 
                             <x-input id="birthdate" :value="$user->user_birthdate" class="block mt-1 w-full" type="date"
-                                name="user_birthdate" required autofocus />
+                                name="user_birthdate" autofocus />
                         </div>
 
+                        @if (Auth::user()->role_id == 1 && Auth::user()->user_id != $user->user_id)
+                            <div class="mt-4 col-span-6">
+                                <x-label for="role" required :value="__('Role')" />
 
-                        <div class="mt-4 col-span-6">
-                            <x-label for="role" required :value="__('Role')" />
+                                <x-select id="role" class="block mt-1 w-full" name="role_id" :options="$roles"
+                                    :selected="$user->role_id" required autofocus />
+                            </div>
+                        @endif
 
-                            <x-select id="role" class="block mt-1 w-full" name="role_id" :options="$roles"
-                                :value="old('role_id')" required autofocus />
-                        </div>
 
 
                         <div class="mt-4 col-span-6">
                             <x-label for="branch" required :value="__('Branch')" />
 
-                            <x-select id="branch" class="block mt-1 w-full" name="brach_id" :options="$branches"
-                                :value="old('branch_id')" required autofocus />
+                            <x-select id="branch" class="block mt-1 w-full" name="branch_id" :options="$branches"
+                                :selected="$user->branch_id" required autofocus />
+                        </div>
+
+                        <div class="col-span-6">
+                            <x-label class="mb-4" required for="is_active" :value="__('Is Active')" />
+                            <div class="flex w-5 h-5">
+                                <x-input id="is_active" :checked="$user->is_active" class="block mt-1 w-full" type="checkbox"
+                                    name="is_active" />
+                            </div>
                         </div>
 
 

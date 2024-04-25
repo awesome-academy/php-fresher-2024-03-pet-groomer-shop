@@ -1,3 +1,7 @@
+@php
+    $activeMenu = \App\Enums\StatusEnum::getTranslated();
+@endphp
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-500 leading-tight">
@@ -11,6 +15,8 @@
                 <div class="p-6  border-b ">
                     <a href="{{ route('user.create') }}">
                         <button class="btn btn-sm btn-primary mb-5">{{ __('Create User') }}</button></a>
+
+                    <x-alert-session />
                     <table class="min-w-full text-left text-sm font-light text-surface ">
                         <thead class="border-b  font-medium ">
                             <tr>
@@ -18,16 +24,22 @@
                                 <th scope="col" class="px-6 py-4">{{ __('Full Name') }}</th>
                                 <th scope="col" class="px-6 py-4">Email</th>
                                 <th scope="col" class="px-6 py-4">Username</th>
+                                <th scope="col" class="px-6 py-4">{{ __('Is Active') }}</th>
                                 <th scope="col" class="px-6 py-4">{{ __('Action') }}</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($users as $user)
+
+                            @forelse ($users as $user)
                                 <tr class="border-b  ">
                                     <td class="whitespace-nowrap px-6 py-4 font-medium">{{ $user->user_id }}</td>
                                     <td class="whitespace-nowrap px-6 py-4">{{ $user->full_name }}</td>
                                     <td class="whitespace-nowrap px-6 py-4">{{ $user->user_email }}</td>
                                     <td class="whitespace-nowrap px-6 py-4">{{ $user->username }}</td>
+                                    <td
+                                        class="whitespace-nowrap px-6 py-4
+                                        {{ $user->is_active ? ' text-green-500' : ' text-red-500' }}">
+                                        {{ $activeMenu[$user->is_active] }}</td>
                                     <td class="whitespace-nowrap px-6 py-4">
                                         <a href="{{ route('user.show', ['user' => $user->user_id]) }}">
 
@@ -36,21 +48,28 @@
                                             </button>
 
                                         </a>
-                                        <form class="inline-flex"
-                                            action="{{ route('user.destroy', ['user' => $user->user_id]) }}"
-                                            method="POST">
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger">
+                                        @if ($user->user_id != Auth::user()->user_id)
+                                            <button onclick="window.user.delete({{ $user->user_id }})" type="submit"
+                                                class="btn btn-danger">
                                                 {{ __('Delete') }}
                                             </button>
+                                        @endif
 
-                                        </form>
                                     </td>
 
                                 </tr>
-                            @endforeach
+                            @empty
+                                @if (count($users) == 0)
+                                    <h4 class="text-center italic">{{ __('No user found') }}</h4>
+                                @endif
+                            @endforelse
+
                         </tbody>
                     </table>
+
+                    <div class="mt-4">
+                        {{ $users->links() }}
+                    </div>
                 </div>
             </div>
         </div>

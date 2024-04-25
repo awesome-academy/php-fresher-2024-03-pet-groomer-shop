@@ -17,6 +17,10 @@ class Pet extends Model
     protected $primaryKey = 'pet_id';
     protected $table = 'pets';
 
+    protected $casts = [
+        'pet_birthdate' => 'date',
+    ];
+
     protected $fillable = [
         'pet_name',
         'pet_type',
