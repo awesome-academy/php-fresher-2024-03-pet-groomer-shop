@@ -4,6 +4,9 @@
   <x-responsive-nav-link :href="route('user.index')" :active="request()->routeIs('user.index')">
       {{ __('User') }}
   </x-responsive-nav-link>
+  <x-responsive-nav-link :href="route('pet.index')" :active="request()->routeIs('pet.index')">
+      {{ __('Pet') }}
+  </x-responsive-nav-link>
   @admin
       <x-responsive-nav-link :href="route('role.index')" :active="request()->routeIs('role.index')">
           {{ __('Role') }}

@@ -27,7 +27,7 @@ class PetRequest extends FormRequest
     {
         $petTypes = PetTypeEnum::getValues();
 
-        return [
+        $rules = [
             'pet_name' => ['required', 'string', 'min:2', 'max:255'],
             'breed_id' => ['nullable', 'exists:breeds,breed_id'],
             'pet_birthdate' => ['date', 'before:today', 'nullable'],
@@ -37,5 +37,11 @@ class PetRequest extends FormRequest
             'pet_weight' => ['required', 'numeric', 'lte:1000', 'gte:0'],
             'pet_type' => ['required', Rule::in($petTypes)],
         ];
+
+        if ($this->has('user_id')) {
+            $rules['user_id'] = ['required', 'exists:users,user_id'];
+        }
+
+        return $rules;
     }
 }

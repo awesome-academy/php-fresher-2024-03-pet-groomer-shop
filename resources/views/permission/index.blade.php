@@ -41,7 +41,8 @@
 
                                         <a
                                             href="{{ route('permission.attach-role-page', ['permission' => $permission->permission_id]) }}">
-                                            <button class="btn btn-success">{{ __('permission.attach_role') }}</button></a>
+                                            <button
+                                                class="btn btn-success">{{ __('permission.attach_role') }}</button></a>
 
                                         <form method="POST"
                                             action="{{ route('permission.destroy', ['permission' => $permission->permission_id]) }}">
@@ -65,8 +66,13 @@
                             @endforelse
 
                         </tbody>
+
                     </table>
+                    <div class="mt-3">
+                        {{ $permissions->links() }}
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>

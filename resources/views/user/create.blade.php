@@ -1,11 +1,3 @@
-@php
-
-    $breadcrumbItems = [
-        ['text' => trans('User'), 'url' => route('user.index')],
-        ['text' => trans('Create User'), 'url' => route('user.create')],
-    ];
-@endphp
-
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">

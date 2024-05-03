@@ -10,4 +10,5 @@ class PermissionEnum extends Enum
     public const CREATE_USER = 'create-user';
     public const UPDATE_ADMIN = 'update-admin';
     public const DELETE_ADMIN = 'delete-admin';
+    public const CREATE_PET = 'create-pet';
 }

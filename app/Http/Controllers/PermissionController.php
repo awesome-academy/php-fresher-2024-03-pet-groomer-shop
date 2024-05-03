@@ -14,14 +14,19 @@ class PermissionController extends Controller
 {
     public function index()
     {
-        $permissions = Permission::all();
+        $permissions = Permission::paginate(config('constant.data_table.item_per_page'));
 
         return view('permission.index', ['permissions' => $permissions]);
     }
 
     public function create()
     {
-        return view('permission.create');
+        $breadcrumbItems = [
+            ['text' => trans('Permission'), 'url' => route('permission.index')],
+            ['text' => trans('permission.create'), 'url' => route('permission.create')],
+        ];
+
+        return view('permission.create', ['breadcrumbItems' => $breadcrumbItems]);
     }
 
     /**
@@ -142,10 +147,18 @@ class PermissionController extends Controller
         try {
             $permission = Permission::findOrFail($id);
             $roles = Role::all();
+            $breadcrumbItems = [
+                ['text' => trans('Permission'), 'url' => route('permission.index')],
+                [
+                    'text' => trans('permission.attach_role'),
+                    'url' => route('permission.attach-role-page', ['permission' => $permission['permission_id']]),
+                ],
+            ];
 
             return view('permission.attach-role', [
                 'permission' => $permission,
                 'roles' => $roles,
+                'breadcrumbItems' => $breadcrumbItems,
             ]);
         } catch (ModelNotFoundException $e) {
             abort(404);

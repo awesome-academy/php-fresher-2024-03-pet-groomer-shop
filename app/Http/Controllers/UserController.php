@@ -25,11 +25,14 @@ class UserController extends Controller
      */
     public function index(): View
     {
-        $users = User::withoutGlobalScope(ActiveUserScope::class)->paginate(10);
+        $users = User::withoutGlobalScope(ActiveUserScope::class)
+            ->paginate(config('constant.data_table.item_per_page'));
 
         return view(
             'user.index',
-            ['users' => $users]
+            [
+                'users' => $users,
+            ]
         );
     }
 
@@ -41,8 +44,12 @@ class UserController extends Controller
     public function create()
     {
         [$roles, $branches] = $this->getOptions();
+        $breadcrumbItems = [
+            ['text' => trans('User'), 'url' => route('user.index')],
+            ['text' => trans('Create User'), 'url' => route('user.create')],
+        ];
 
-        return view('user.create', ['roles' => $roles, 'branches' => $branches]);
+        return view('user.create', ['roles' => $roles, 'branches' => $branches, 'breadcrumbItems' => $breadcrumbItems]);
     }
 
     public function store(UserRequest $request)
@@ -77,7 +84,18 @@ class UserController extends Controller
             return abort(404);
         }
 
-        return view('user.show', ['user' => $user, 'roles' => $roles, 'branches' => $branches, 'breeds' => $breeds]);
+        $breadcrumbItems = [
+            ['text' => trans('User'), 'url' => route('user.index')],
+            ['text' => trans('User Detail'), 'url' => route('user.show', ['user' => $user->user_id])],
+        ];
+
+        return view('user.show', [
+            'user' => $user,
+            'roles' => $roles,
+            'branches' => $branches,
+            'breeds' => $breeds,
+            'breadcrumbItems' => $breadcrumbItems,
+        ]);
     }
 
     public function edit($id)
