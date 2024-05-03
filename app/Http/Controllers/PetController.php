@@ -26,6 +26,8 @@ class PetController extends Controller
         $activeMenu = StatusEnum::getTranslated();
         $petTypes = PetTypeEnum::getTranslated();
         $petTypesSelected = array_flip($petTypes);
+        $petTypesSelectedExtra = $petTypesSelected;
+        $petTypesSelectedExtra[__('All')] = '';
 
         return view('pet.index', [
             'pets' => $pets,
@@ -33,6 +35,7 @@ class PetController extends Controller
             'activeMenu' => $activeMenu,
             'petTypes' => $petTypes,
             'petTypesSelected' => $petTypesSelected,
+            'petTypesSelectedExtra' => $petTypesSelectedExtra,
             'oldInput' => $oldInput,
         ]);
     }
@@ -71,19 +74,9 @@ class PetController extends Controller
 
             $userIDInput = $request->input('user_id');
             $data['user_id'] = $userIDInput ?? $userID;
-
-            if (Gate::denies('create', User::class)) {
-                throw new Exception(trans('permission.create_fail'));
-            }
-
-            $userIDInput = $request->input('user_id');
-            $data['user_id'] = $userIDInput ?? $userID;
             $data['is_active'] = $request->has('is_active') ? 1 : 0;
 
             DB::table('pets')->insert($data);
-            if ($userIDInput) {
-                return redirect()->route('pet.index')->with('success', __('Pet created successfully'));
-            }
 
             if ($userIDInput) {
                 return redirect()->route('pet.index')->with('success', __('Pet created successfully'));

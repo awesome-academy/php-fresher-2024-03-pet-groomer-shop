@@ -44,7 +44,7 @@ class EmployeeController extends Controller
 
         $orders = CareOrder::where('branch_id', $branchID)
             ->orderBy('updated_at', 'desc')
-            ->paginate(15)->withQueryString();
+            ->paginate(config('constant.data_table.item_per_page'))->withQueryString();
 
         return view('employee.assign-task', [
             'orders' => $orders,
