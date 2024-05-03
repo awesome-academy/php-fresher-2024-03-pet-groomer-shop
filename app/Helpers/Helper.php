@@ -17,3 +17,10 @@ if (!function_exists('formatDate')) {
         return $date;
     }
 }
+
+if (!function_exists('flashMessage')) {
+    function flashMessage(string $type, string $message)
+    {
+        session()->flash($type, $message);
+    }
+}

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\RoleEnum;
 use App\Scopes\ActiveUserScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -67,7 +68,7 @@ class User extends Authenticatable
     // local scope
     public function scopeAdmin($query)
     {
-        return $query->where('is_admin', 1);
+        return $query->where('is_admin', RoleEnum::ADMIN)->exists();
     }
 
     //Relations
@@ -146,5 +147,10 @@ class User extends Authenticatable
     public static function getUserByID($id)
     {
         return self::withoutGlobalScope(ActiveUserScope::class)->findOrFail($id);
+    }
+
+    public function hasPermission(string $permission)
+    {
+        return $this->role->rolePermission->pluck('permission_name')->contains($permission);
     }
 }

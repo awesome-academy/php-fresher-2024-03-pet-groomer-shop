@@ -90,7 +90,11 @@
     "No options": "No options",
     "Active": "Active",
     "Inactive": "Inactive",
-    "You cannot delete yourself": "You cannot delete yourself",
+    "You cannot delete yourself or admin": "You cannot delete yourself or admin",
+    "You cannot change your role": "You cannot change your role",
+    "You cannot change role to admin": "You cannot change role to admin",
+    "You cannot update this user": "You cannot update this user",
+    "You do not have permission to create user": "You do not have permission to create user",
     "User created successfully": "User created successfully",
     "User deleted successfully": "User deleted successfully",
     "User updated successfully": "User updated successfully",
@@ -113,5 +117,8 @@
     "Pet updated successfully": "Pet updated successfully",
     "Show Pet": "Show Pet",
     "You're logged in!": "You're logged in!",
-    "Whoops! Something went wrong.": "Whoops! Something went wrong."
+    "Whoops! Something went wrong.": "Whoops! Something went wrong.",
+    "Created At": "Created At",
+    "Updated At": "Updated At",
+    "Permission": "Permission"
 }

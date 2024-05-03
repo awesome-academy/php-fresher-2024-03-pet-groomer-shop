@@ -3,7 +3,9 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PetController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,8 +28,21 @@ Route::get('/dashboard', [DashboardController::class, 'dashboard'])
     ->middleware(['auth'])
     ->name('dashboard');
 
-Route::middleware(['auth', 'admin'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::resource('user', UserController::class)->names('user');
+    Route::middleware(['admin'])->group(function () {
+        Route::resource('role', RoleController::class)->names('role');
+        // Permission
+        Route::resource('permission', PermissionController::class)->names('permission');
+        Route::get(
+            'permission/{permission}/attach-role',
+            [PermissionController::class, 'attachRolePage']
+        )->name('permission.attach-role-page');
+        Route::post(
+            'permission/{permission}/attach-role',
+            [PermissionController::class, 'attachRole']
+        )->name('permission.attach-role');
+    });
 });
 
 Route::get('/pet', [PetController::class, 'index'])->name('pet.index');

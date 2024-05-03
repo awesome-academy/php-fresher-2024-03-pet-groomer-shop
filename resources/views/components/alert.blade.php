@@ -9,7 +9,7 @@
     ];
 @endphp
 
-<div class="border {{ $classes[$type] }} px-4 py-3 rounded relative" role="alert">
+<div class="border {{ $classes[$type] }} px-4 py-3 my-3 rounded relative" role="alert">
     <strong class="font-bold">{{ ucfirst($title) }}!</strong>
     <span class="block sm:inline">{{ $content }}</span>
 </div>

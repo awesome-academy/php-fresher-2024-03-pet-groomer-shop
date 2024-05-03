@@ -90,7 +90,11 @@
     "No options": "Không có lựa chọn",
     "Active": "Hoạt động",
     "Inactive": "Không hoạt động",
-    "You cannot delete yourself": "Bạn không thể xóa chính bạn",
+    "You cannot delete yourself or admin": "Bạn không thể xóa chính bạn hoặc admin",
+    "You cannot change your role": "Bạn không thể thay đổi vai trò",
+    "You cannot change role to admin": "Bạn không thể thay đổi vai trò sang admin",
+    "You cannot update this user": "Bạn không thể cập nhật user này",
+    "You do not have permission to create user": "Bạn không thể tạo user user",
     "User deleted successfully": "Xóa user thành công",
     "User created successfully": "Tạo user thành công",
     "User updated successfully": "Cập nhật user này thành công",
@@ -113,5 +117,8 @@
     "Pet updated successfully": "Cập  nhật thú cưng thành công",
     "Show Pet": "Hiển thị thú cưng",
     "You're logged in!": "Bạn đã đăng nhập!",
-    "Whoops! Something went wrong.": "Rất tiếc! Đã có xảy ra lỗi."
+    "Whoops! Something went wrong.": "Rất tiếc! Đã có xảy ra lỗi.",
+    "Created At": "Ngày Tạo",
+    "Updated At": "Ngày Cập Nhật",
+    "Permission": "Quyền"
 }

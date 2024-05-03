@@ -12,6 +12,7 @@ use App\Scopes\ActiveUserScope;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
@@ -48,6 +49,10 @@ class UserController extends Controller
     {
         try {
             $user = new User();
+            if (Gate::denies('create', User::class)) {
+                return redirect()->route('user.create')->with('error', __('You do not have permission to create user'));
+            }
+
             $user->fill($request->all());
             $user->is_active  = $request->has('is_active') ? 1 : 0;
             $user->user_password = Hash::make($request->user_password);
@@ -85,6 +90,27 @@ class UserController extends Controller
         try {
             $data = $request->except(['user_email', 'username', 'user_password']);
             $user = User::getUserByID($id);
+
+            if ($user->admin() && Gate::denies('updateAdmin', $user)) {
+                return redirect()->route(
+                    'user.show',
+                    ['user' => $id]
+                )->with(
+                    'error',
+                    __('You cannot update this user')
+                );
+            }
+
+            if (Gate::denies('update', $user)) {
+                return redirect()->route(
+                    'user.show',
+                    ['user' => $id]
+                )->with(
+                    'error',
+                    __('You cannot update this user')
+                );
+            }
+
             $user->fill($data);
             $user->is_active  = $request->has('is_active') ? 1 : 0;
 
@@ -111,15 +137,25 @@ class UserController extends Controller
     {
         try {
             $user = User::withoutGlobalScope(ActiveUserScope::class)->findOrFail($id);
-            if (Auth::user()->user_id === $user->user_id) {
-                return redirect()->route('user.index')->with('error', __('You cannot delete yourself'));
+            if ($user->admin() && Gate::denies('deleteAdmin', $user)) {
+                flashMessage('error', __('You cannot delete yourself or admin'));
+
+                return 'error';
+            }
+
+            if (!Gate::allows('delete', $user)) {
+                flashMessage('error', __('You cannot delete yourself or admin'));
+
+                return 'error';
             }
 
             $user->delete();
 
-            return redirect()->route('user.index')->with('success', __('User deleted successfully'));
+            flashMessage('success', __('User deleted successfully'));
+
+            return 'success';
         } catch (ModelNotFoundException $e) {
-            return redirect()->route('user.index')->with('error', $e->getMessage());
+            flashMessage('error', $e->getMessage());
         }
     }
 

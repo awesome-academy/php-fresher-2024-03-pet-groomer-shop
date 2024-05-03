@@ -28,18 +28,23 @@ class UserRequest extends FormRequest
             'user_last_name' => ['required', 'string', 'min:2', 'max:255'],
             'user_gender' => ['required', 'in:0,1,2'],
             'user_phone_number' => ['string', 'min:10', 'max:10', 'nullable'],
-            'user_address' => ['string', 'min:5', 'max:255', 'nullable'],
+            'user_address' => ['string', 'min:3', 'max:255', 'nullable'],
             'user_image' => ['image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048', 'nullable'],
             'user_birthdate' => ['date', 'before:' . now()->subYears(8)->toDateString(), 'nullable'],
-            'role_id' => ['required', 'exists:roles,role_id'],
             'branch_id' => ['required', 'exists:branches,branch_id'],
         ];
 
         // make if condition here because the update form don't has these fields
-        if ($this->has('user_password') && $this->has('username') && $this->has('user_email')) {
+        if (
+            $this->has('user_password')
+            && $this->has('username')
+            && $this->has('user_email')
+            && $this->has('role_id')
+        ) {
             $rules['user_password'] = ['required', 'string', 'min:8', 'confirmed'];
             $rules['username'] = ['required', 'string', 'min:3', 'max:255', 'unique:users'];
             $rules['user_email'] = ['required', 'string', 'email', 'max:255', 'unique:users'];
+            $rules['role_id'] = ['required', 'exists:roles,role_id'];
         }
 
         return $rules;
