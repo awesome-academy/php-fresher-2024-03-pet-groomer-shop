@@ -14,6 +14,10 @@ class Role extends Model
     protected $primaryKey = 'role_id';
     protected $table = 'roles';
 
+    protected $fillable = [
+        'role_name',
+    ];
+
     public function rolePermission(): BelongsToMany
     {
         return $this->belongsToMany(Permission::class, 'role_permission', 'role_id', 'permission_id');

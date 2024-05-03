@@ -2,10 +2,11 @@ window.pet = {
     delete: function (id, userID) {
         // eslint-disable-next-line no-undef
         Swal.fire({
-            title: "Are you sure?",
-            text: "You won't be able to revert this!",
+            title: window.trans("alert.delete_title"),
+            text: window.trans("alert.delete_content"),
             icon: "warning",
             showCancelButton: true,
+            cancelButtonText: window.trans("alert.cancel"),
         }).then((result) => {
             if (result.isConfirmed) {
                 // eslint-disable-next-line no-undef
@@ -15,8 +16,8 @@ window.pet = {
                     success: function () {
                         window.location.reload();
                     },
-                    error: function () {
-                        window.location.reload();
+                    error: function (error) {
+                        console.error(error);
                     },
                 });
             }
