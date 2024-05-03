@@ -19,6 +19,11 @@
         {{ __('employee.employee') }}
     </x-nav-link>
 </div>
+<div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+    <x-nav-link :href="route('coupon.index')" :active="request()->routeIs('coupon.index')">
+        {{ __('coupon.coupon') }}
+    </x-nav-link>
+</div>
 @admin
     <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
         <x-nav-link :href="route('role.index')" :active="request()->routeIs('role.index')">

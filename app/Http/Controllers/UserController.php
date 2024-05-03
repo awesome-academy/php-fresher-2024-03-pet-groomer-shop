@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\RoleEnum;
+use App\Http\Requests\UserRequest;
 use App\Models\Branch;
 use App\Models\Breed;
 use App\Models\Role;
@@ -25,6 +26,11 @@ class UserController extends Controller
         $users = $users->where($conditions)
             ->orderBy('created_at', 'desc')
             ->paginate(config('constant.data_table.item_per_page'))->withQueryString();
+
+        [$roles] = $this->getOptions();
+        $roles['all'] = '';
+
+        $oldInput = $request->all();
 
         [$roles] = $this->getOptions();
         $roles['all'] = '';

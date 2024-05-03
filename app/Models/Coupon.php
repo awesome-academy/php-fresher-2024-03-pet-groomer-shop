@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\StatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,6 +16,7 @@ class Coupon extends Model
 
     protected $primaryKey = 'coupon_id';
     protected $table = 'coupons';
+    protected $guarded = [];
 
     public function createdBy(): BelongsTo
     {
@@ -24,5 +26,15 @@ class Coupon extends Model
     public function careOrders(): HasMany
     {
         return $this->hasMany(CareOrder::class, 'coupon_id', 'coupon_id');
+    }
+
+    public function getIsActiveNameAttribute(): string
+    {
+        return StatusEnum::getTranslated()[$this->is_active];
+    }
+
+    public function getFormatCouponPriceAttribute(): string
+    {
+        return formatNumber($this->coupon_price, 'VND');
     }
 }
