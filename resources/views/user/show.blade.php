@@ -110,7 +110,7 @@
                                 name="user_birthdate" autofocus />
                         </div>
 
-                        @if (Auth::user()->role_id == 1 && Auth::user()->user_id != $user->user_id)
+                        @if (Auth::user()->user_id != $user->user_id)
                             <div class="mt-4 col-span-6">
                                 <x-label for="role" required :value="__('Role')" />
 

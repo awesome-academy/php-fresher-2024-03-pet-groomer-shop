@@ -1,4 +1,4 @@
-window.pet = {
+const pet = {
     delete: function (id, userID) {
         // eslint-disable-next-line no-undef
         Swal.fire({
@@ -9,10 +9,11 @@ window.pet = {
             cancelButtonText: window.trans("alert.cancel"),
         }).then((result) => {
             if (result.isConfirmed) {
+                const url = "/pet/" + id + "/delete/" + userID;
                 // eslint-disable-next-line no-undef
                 $.ajax({
                     method: "DELETE",
-                    url: ` / pet / ${id} / delete / ${userID}`,
+                    url: url,
                     success: function () {
                         window.location.reload();
                     },
@@ -24,3 +25,11 @@ window.pet = {
         });
     },
 };
+
+window.pet = pet;
+
+window.$(document).ready(function () {
+    window.$(document).on("click", ".delete-pet-btn", function () {
+        pet.delete(window.$(this).data("id"));
+    });
+});
