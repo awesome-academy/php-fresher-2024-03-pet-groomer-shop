@@ -110,7 +110,7 @@
                                 name="user_birthdate" autofocus />
                         </div>
 
-                        @if (Auth::user()->role_id == 1 && Auth::user()->user_id != $user->user_id)
+                        @if (Auth::user()->user_id != $user->user_id)
                             <div class="mt-4 col-span-6">
                                 <x-label for="role" required :value="__('Role')" />
 
@@ -144,7 +144,7 @@
                         </div>
                     </form>
                 </div>
-                <div class="p-6 bg-white border-b border-gray-200">
+                <div class="p-6 bg-white border-b  border-gray-200">
 
                     @include('user.includes.pet')
                 </div>

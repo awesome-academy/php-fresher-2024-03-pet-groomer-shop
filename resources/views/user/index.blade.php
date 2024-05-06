@@ -49,7 +49,7 @@
 
                                         </a>
                                         @if ($user->user_id != Auth::user()->user_id)
-                                            <button onclick="window.user.delete({{ $user->user_id }})" type="submit"
+                                            <button onclick="window.user.delete({{ $user->user_id }})" type="button"
                                                 class="btn btn-danger">
                                                 {{ __('Delete') }}
                                             </button>
