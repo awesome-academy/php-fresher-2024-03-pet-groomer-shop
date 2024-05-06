@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PetRequest;
+use App\Models\Pet;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class PetController extends Controller
 {
@@ -95,11 +97,15 @@ class PetController extends Controller
     public function destroy($id, $userID)
     {
         try {
-            DB::table('pets')->where('pet_id', $id)->delete();
-
-            return redirect()->route('user.show', $userID)->with('success', __('Pet deleted successfully'));
+            $pet = Pet::find($id);
+            // Check if the current user is authorized to delete the pet
+            if (Gate::allows('delete', $pet)) {
+                // Authorized to delete the pet
+                DB::table('pets')->where('pet_id', $id)->delete();
+                flashMessage('success', __('Pet deleted successfully'));
+            }
         } catch (Exception $exception) {
-            return redirect()->route('user.show', $userID)->with('error', $exception->getMessage());
+            flashMessage('error', $exception->getMessage());
         }
     }
 }
