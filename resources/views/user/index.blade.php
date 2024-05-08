@@ -1,3 +1,4 @@
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-500 leading-tight">
@@ -13,6 +14,8 @@
                         <button class="btn btn-sm btn-primary mb-5">{{ __('Create User') }}</button></a>
 
                     <x-alert-session />
+
+                    @include('user.includes.search')
                     <table class="min-w-full text-left text-sm font-light text-surface ">
                         <thead class="border-b  font-medium ">
                             <tr>
@@ -21,6 +24,7 @@
                                 <th scope="col" class="px-6 py-4">Email</th>
                                 <th scope="col" class="px-6 py-4">Username</th>
                                 <th scope="col" class="px-6 py-4">{{ __('Is Active') }}</th>
+                                <th scope="col" class="px-6 py-4">{{ __('Role') }}</th>
                                 <th scope="col" class="px-6 py-4">{{ __('Action') }}</th>
                             </tr>
                         </thead>

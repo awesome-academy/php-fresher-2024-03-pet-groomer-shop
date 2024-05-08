@@ -13,6 +13,7 @@
                         <button class="btn btn-sm btn-primary mb-5">{{ __('pet.create') }}</button></a>
                     <x-auth-validation-errors class="mb-4" :errors="$errors" />
                     <x-alert-session />
+                    @include('pet.includes.search')
                     <table class="min-w-full  text-left text-sm font-light text-surface m-4">
                         <thead class="border-b  font-medium ">
                             <tr>
@@ -44,14 +45,18 @@
                                         {{ $activeMenu[$pet->is_active] }}</td>
                                     <td class="whitespace-nowrap px-6 py-4">
 
-                                        <a class="text-indigo-600" href="{{ route('user.show', $pet->user->user_id) }}">
+                                        <a class="text-indigo-600"
+                                            href="{{ route('user.show', $pet->user->user_id) }}">
                                             {{ $pet->user->user_email }}
                                         </a>
                                     </td>
 
                                     <td class="whitespace-nowrap px-6 py-4 flex gap-2">
 
-                                        @include('user.includes.show-pet', ['pet' => $pet, 'redirect_pet_index' => 1])
+                                        @include('user.includes.show-pet', [
+                                            'pet' => $pet,
+                                            'redirect_pet_index' => 1,
+                                        ])
 
                                         <button type="submit" onclick="window.pet.delete({{ $pet->pet_id }})"
                                             class="btn btn-danger">
@@ -70,7 +75,7 @@
 
                     </table>
 
-                    <div>
+                    <div class="mt-3">
                         {{ $pets->links() }}
                     </div>
                 </div>

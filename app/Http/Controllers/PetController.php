@@ -10,15 +10,17 @@ use App\Models\Pet;
 use App\Models\Role;
 use App\Models\User;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class PetController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pets = Pet::with('user')->paginate(config('constant.data_table.item_per_page'));
-
+        $conditions = formatQuery($request->query());
+        $pets = Pet::with('user')->where($conditions)->paginate(config('constant.data_table.item_per_page'));
+        $oldInput = $request->all();
         $breeds = Breed::pluck('breed_id', 'breed_name');
 
         $activeMenu = StatusEnum::getTranslated();
@@ -31,6 +33,7 @@ class PetController extends Controller
             'activeMenu' => $activeMenu,
             'petTypes' => $petTypes,
             'petTypesSelected' => $petTypesSelected,
+            'oldInput' => $oldInput,
         ]);
     }
 
@@ -77,10 +80,6 @@ class PetController extends Controller
 
             return redirect()->route('user.show', $userID)->with('success', __('Pet created successfully'));
         } catch (Exception $exception) {
-            if ($userIDInput) {
-                return redirect()->route('pet.index')->with('error', $exception->getMessage());
-            }
-
             return redirect()->route('user.show', $userID)->with('error', $exception->getMessage());
         }
     }
@@ -107,6 +106,13 @@ class PetController extends Controller
         //
     }
 
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function update(PetRequest $request, $id, $userID)
     {
         try {
@@ -134,20 +140,7 @@ class PetController extends Controller
                 __('Pet updated successfully')
             );
         } catch (Exception $exception) {
-            if ((int) $redirectValue === 1) {
-                return redirect()->route('pet.index')->with(
-                    'error',
-                    $exception->getMessage()
-                );
-            }
-
-            return redirect()->route(
-                'user.show',
-                $userID
-            )->with(
-                'error',
-                $exception->getMessage()
-            );
+            return redirect()->route('user.show', $userID)->with('error', $exception->getMessage());
         }
     }
 
