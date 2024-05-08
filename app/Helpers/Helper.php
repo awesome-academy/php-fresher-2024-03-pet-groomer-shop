@@ -18,9 +18,48 @@ if (!function_exists('formatDate')) {
     }
 }
 
+if (!function_exists('formatNumber')) {
+    function formatNumber($number, $type = '')
+    {
+        $whole = floor($number);  // returns the whole number part
+        $fraction = $number - $whole;  // returns the fractional part
+
+        if ($fraction > 0) {
+            // if the number has a fractional part, format with decimal
+            return number_format($number, 1, ',', '.') . ' ' . $type;
+        }
+
+        // if the number doesn't have a fractional part, format without decimal
+        return number_format($number, 0, ',', '.') . ' ' . $type;
+    }
+}
+
 if (!function_exists('flashMessage')) {
     function flashMessage(string $type, string $message)
     {
         session()->flash($type, $message);
+    }
+}
+
+if (!function_exists('formatQuery')) {
+    function formatQuery(array $arrData)
+    {
+        $conditions = [];
+        $arrData = array_diff_key($arrData, ['page' => 0]);
+        foreach ($arrData as $field => $value) {
+            if ($value !== null) {
+                if (is_array($value)) {
+                    $conditions[] = [$field, 'IN', $value];
+                } else {
+                    if (is_numeric($value)) {
+                        $conditions[] = [$field, $value];
+                    } else {
+                        $conditions[] = [$field, 'LIKE', "%$value%"];
+                    }
+                }
+            }
+        }
+
+        return $conditions;
     }
 }

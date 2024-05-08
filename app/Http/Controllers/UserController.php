@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Scopes\ActiveUserScope;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
@@ -18,20 +19,25 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $users = User::withoutGlobalScope(ActiveUserScope::class)
-            ->paginate(config('constant.data_table.item_per_page'));
+        $users = User::withoutGlobalScope(ActiveUserScope::class);
+        $conditions = formatQuery($request->query());
+        $users = $users->where($conditions)
+            ->orderBy('created_at', 'desc')
+            ->paginate(config('constant.data_table.item_per_page'))->withQueryString();
+
+        [$roles] = $this->getOptions();
+        $roles['all'] = '';
+
+        $oldInput = $request->all();
 
         return view(
             'user.index',
             [
                 'users' => $users,
+                'roles' => $roles,
+                'oldInput' => $oldInput,
             ]
         );
     }

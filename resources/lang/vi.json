@@ -25,6 +25,7 @@
     "Other": "Khác",
     "User": "Người dùng",
     "User Detail": "Chi tiết người dùng",
+    "Search Users": "Tìm kiếm người dùng",
     "Create": "Thêm",
     "Edit": "Chỉnh sửa",
     "Update": "Cập nhật",
@@ -121,5 +122,11 @@
     "Whoops! Something went wrong.": "Rất tiếc! Đã có xảy ra lỗi.",
     "Created At": "Ngày Tạo",
     "Updated At": "Ngày Cập Nhật",
-    "Permission": "Quyền"
+    "Permission": "Quyền",
+    "Search": "Tìm kiếm",
+    "From Time": "Từ thời gian",
+    "To Time": "Đến thời gian",
+    "Assigned": "Đã giao",
+    "Search Pet": "Tìm kiếm thú cưng",
+    "All": "Tất cả"
 }

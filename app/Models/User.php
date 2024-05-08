@@ -100,7 +100,7 @@ class User extends Authenticatable
             'assign_task',
             'user_id',
             'order_id'
-        )->withPivot(['from_time', 'to_time'])->withTimestamps();
+        )->withPivot(['from_time', 'to_time']);
     }
 
     public function coupons(): HasMany
@@ -153,6 +153,11 @@ class User extends Authenticatable
     public function hasPermission(string $permission)
     {
         return $this->role->rolePermission->pluck('permission_name')->contains($permission);
+    }
+
+    public static function checkValid($id)
+    {
+        return self::where('user_id', $id)->exists();
     }
 
     public function getIsActiveNameAttribute(): string

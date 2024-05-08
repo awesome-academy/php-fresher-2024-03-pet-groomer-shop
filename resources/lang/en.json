@@ -25,6 +25,7 @@
     "Other": "Other",
     "User": "User",
     "User Detail": "User Detail",
+    "Search Users": "Search Users",
     "Username": "Username",
     "Create User": "Create User",
     "Create": "Create",
@@ -121,5 +122,11 @@
     "Whoops! Something went wrong.": "Whoops! Something went wrong.",
     "Created At": "Created At",
     "Updated At": "Updated At",
-    "Permission": "Permission"
+    "Permission": "Permission",
+    "Search": "Search",
+    "From Time": "From Time",
+    "To Time": "To Time",
+    "Assigned": "Assigned",
+    "Search Pet": "Search Pet",
+    "All": "All"
 }
