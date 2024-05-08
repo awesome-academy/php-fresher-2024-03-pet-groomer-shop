@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\RoleEnum;
+use App\Enums\StatusEnum;
 use App\Scopes\ActiveUserScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -152,5 +153,12 @@ class User extends Authenticatable
     public function hasPermission(string $permission)
     {
         return $this->role->rolePermission->pluck('permission_name')->contains($permission);
+    }
+
+    public function getIsActiveNameAttribute(): string
+    {
+        $activeName = StatusEnum::getTranslated();
+
+        return $activeName[$this->is_active];
     }
 }

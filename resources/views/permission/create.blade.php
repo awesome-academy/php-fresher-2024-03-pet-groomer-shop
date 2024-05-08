@@ -1,11 +1,3 @@
-@php
-
-    $breadcrumbItems = [
-        ['text' => trans('Permission'), 'url' => route('permission.index')],
-        ['text' => trans('permission.create'), 'url' => route('permission.create')],
-    ];
-@endphp
-
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">

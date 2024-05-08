@@ -23,5 +23,7 @@ return [
         '3' => 'Bird',
         '4' => 'Other',
     ],
-
+    'data_table' => [
+        'item_per_page' => 15,
+    ],
 ];

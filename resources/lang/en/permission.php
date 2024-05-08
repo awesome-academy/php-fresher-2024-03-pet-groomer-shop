@@ -11,4 +11,7 @@ return [
     'create_success' => 'Create permission successfully',
     'update_success' => 'Update permission successfully',
     'delete_success' => 'Delete permission successfully',
+    'create_fail' => 'Don\'t have permission to create',
+    'update_fail' => 'Don\'t have permission to update',
+    'delete_fail' => 'Don\'t have permission to delete',
 ];

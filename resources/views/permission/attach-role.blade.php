@@ -1,14 +1,3 @@
-@php
-
-    $breadcrumbItems = [
-        ['text' => trans('Permission'), 'url' => route('permission.index')],
-        [
-            'text' => trans('permission.attach_role'),
-            'url' => route('permission.attach-role-page', ['permission' => $permission['permission_id']]),
-        ],
-    ];
-@endphp
-
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">

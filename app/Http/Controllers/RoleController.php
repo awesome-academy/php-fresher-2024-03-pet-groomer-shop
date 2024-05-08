@@ -18,8 +18,10 @@ class RoleController extends Controller
     public function index()
     {
         $roles = Role::all();
+        $activeMenu = \App\Enums\StatusEnum::getTranslated();
+        $ADMIN = \App\Enums\RoleEnum::ADMIN;
 
-        return view('role.index', ['roles' => $roles]);
+        return view('role.index', ['roles' => $roles, 'activeMenu' => $activeMenu, 'ADMIN' => $ADMIN]);
     }
 
     /**
@@ -29,7 +31,12 @@ class RoleController extends Controller
      */
     public function create()
     {
-        return view('role.create');
+        $breadcrumbItems = [
+            ['text' => trans('Role'), 'url' => route('role.index')],
+            ['text' => trans('role.create'), 'url' => route('role.create')],
+        ];
+
+        return view('role.create', ['breadcrumbItems' => $breadcrumbItems]);
     }
 
     public function store(RoleRequest $request)
