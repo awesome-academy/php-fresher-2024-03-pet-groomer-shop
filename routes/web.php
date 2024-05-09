@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CouponController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LandingPageController;
@@ -47,6 +48,8 @@ Route::middleware(['auth'])->group(function () {
         [EmployeeController::class, 'updateAssignTask']
     )
         ->name('employee.update-assign-task');
+
+    Route::resource('coupon', CouponController::class)->names('coupon');
 
     Route::middleware(['admin'])->group(function () {
         Route::resource('role', RoleController::class)->names('role');

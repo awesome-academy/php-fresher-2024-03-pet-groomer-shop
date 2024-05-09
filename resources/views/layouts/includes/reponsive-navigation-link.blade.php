@@ -10,6 +10,9 @@
   <x-responsive-nav-link :href="route('employee.index')" :active="request()->routeIs('employee.index')">
       {{ __('employee.employee') }}
   </x-responsive-nav-link>
+  <x-responsive-nav-link :href="route('coupon.index')" :active="request()->routeIs('coupon.index')">
+      {{ __('coupon.coupon') }}
+  </x-responsive-nav-link>
   @admin
       <x-responsive-nav-link :href="route('role.index')" :active="request()->routeIs('role.index')">
           {{ __('Role') }}

@@ -71,6 +71,13 @@ class PetController extends Controller
 
             $userIDInput = $request->input('user_id');
             $data['user_id'] = $userIDInput ?? $userID;
+
+            if (Gate::denies('create', User::class)) {
+                throw new Exception(trans('permission.create_fail'));
+            }
+
+            $userIDInput = $request->input('user_id');
+            $data['user_id'] = $userIDInput ?? $userID;
             $data['is_active'] = $request->has('is_active') ? 1 : 0;
 
             DB::table('pets')->insert($data);
@@ -78,8 +85,16 @@ class PetController extends Controller
                 return redirect()->route('pet.index')->with('success', __('Pet created successfully'));
             }
 
+            if ($userIDInput) {
+                return redirect()->route('pet.index')->with('success', __('Pet created successfully'));
+            }
+
             return redirect()->route('user.show', $userID)->with('success', __('Pet created successfully'));
         } catch (Exception $exception) {
+            if ($userIDInput) {
+                return redirect()->route('pet.index')->with('error', $exception->getMessage());
+            }
+
             return redirect()->route('user.show', $userID)->with('error', $exception->getMessage());
         }
     }
@@ -106,13 +121,6 @@ class PetController extends Controller
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(PetRequest $request, $id, $userID)
     {
         try {
@@ -140,7 +148,20 @@ class PetController extends Controller
                 __('Pet updated successfully')
             );
         } catch (Exception $exception) {
-            return redirect()->route('user.show', $userID)->with('error', $exception->getMessage());
+            if ((int) $redirectValue === 1) {
+                return redirect()->route('pet.index')->with(
+                    'error',
+                    $exception->getMessage()
+                );
+            }
+
+            return redirect()->route(
+                'user.show',
+                $userID
+            )->with(
+                'error',
+                $exception->getMessage()
+            );
         }
     }
 
