@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\PermissionController;
@@ -30,6 +31,23 @@ Route::get('/dashboard', [DashboardController::class, 'dashboard'])
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('user', UserController::class)->names('user');
+    Route::resource('employee', EmployeeController::class)->names('employee');
+    Route::get(
+        '/employee/assign-task/{employee}/{branch}',
+        [EmployeeController::class, 'assignTaskPage']
+    )
+        ->name('employee.assign-task-page');
+    Route::post(
+        '/employee/assign-task/{employee}/{order}',
+        [EmployeeController::class, 'assignTask']
+    )
+        ->name('employee.assign-task');
+    Route::put(
+        '/employee/assign-task/{employee}/{order}',
+        [EmployeeController::class, 'updateAssignTask']
+    )
+        ->name('employee.update-assign-task');
+
     Route::middleware(['admin'])->group(function () {
         Route::resource('role', RoleController::class)->names('role');
         // Permission

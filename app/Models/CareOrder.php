@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\OrderStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -42,7 +43,7 @@ class CareOrder extends Model
             'assign_task',
             'order_id',
             'user_id'
-        )->withPivot(['from_time', 'to_time'])->withTimestamps();
+        )->withPivot(['from_time', 'to_time']);
     }
 
     public function hotelServices(): HasOne
@@ -58,5 +59,12 @@ class CareOrder extends Model
             'order_id',
             'pet_service_id'
         )->withPivot(['pet_service_price'])->withTimestamps();
+    }
+
+    public function getOrderStatusNameAttribute()
+    {
+        $orderStatusNames = OrderStatusEnum::getTranslated();
+
+        return $orderStatusNames[$this->order_status];
     }
 }
