@@ -19,6 +19,11 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\View\View
+     */
     public function index(Request $request): View
     {
         $users = User::withoutGlobalScope(ActiveUserScope::class);
@@ -29,24 +34,16 @@ class UserController extends Controller
 
         [$roles] = $this->getOptions();
         $roles['all'] = '';
-
-        $oldInput = $request->all();
-
-        [$roles] = $this->getOptions();
-        $roles['all'] = '';
-
-        $oldInput = $request->all();
-
-        [$roles] = $this->getOptions();
-        $roles['all'] = '';
-
+        $roleEnum = array_flip(\App\Enums\RoleEnum::getConstants());
         $oldInput = $request->all();
 
         return view(
             'user.index',
             [
                 'users' => $users,
+                'oldInput' => $oldInput,
                 'roles' => $roles,
+                'roleEnum' => $roleEnum,
                 'oldInput' => $oldInput,
             ]
         );

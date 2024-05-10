@@ -7,6 +7,7 @@ use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PetController;
+use App\Http\Controllers\PetServiceController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -32,6 +33,7 @@ Route::get('/dashboard', [DashboardController::class, 'dashboard'])
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('user', UserController::class)->names('user');
+
     Route::resource('employee', EmployeeController::class)->names('employee');
     Route::get(
         '/employee/assign-task/{employee}/{branch}',
@@ -50,6 +52,10 @@ Route::middleware(['auth'])->group(function () {
         ->name('employee.update-assign-task');
 
     Route::resource('coupon', CouponController::class)->names('coupon');
+
+    Route::resource('coupon', CouponController::class)->names('coupon');
+
+    Route::resource('pet-service', PetServiceController::class)->names('pet-service');
 
     Route::middleware(['admin'])->group(function () {
         Route::resource('role', RoleController::class)->names('role');

@@ -1,8 +1,3 @@
-@php
-    $petTypesSelectedExtra = $petTypesSelected;
-    $petTypesSelectedExtra[__('All')] = '';
-@endphp
-
 <div>
     <form class=" flex flex-wrap md:grid grid-cols-12 gap-4 my-4 mb-10" action="{{ route('pet.index') }}" method="GET">
         <h2 class="col-span-12 font-bold text-xl">

@@ -17,6 +17,8 @@ class PetService extends Model
     protected $primaryKey = 'pet_service_id';
     protected $table = 'pet_services';
 
+    protected $guarded = [];
+
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by', 'user_id');
