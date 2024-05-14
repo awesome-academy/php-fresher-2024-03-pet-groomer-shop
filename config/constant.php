@@ -26,4 +26,11 @@ return [
     'data_table' => [
         'item_per_page' => 15,
     ],
+    'max_number' => 10000000000,
+    'pet_price_weight' => [
+        'Less than 5kg' => 5,
+        'Less than 10kg' => 10,
+        'Less than 50kg' => 50,
+        'Less than 100kg' => 100,
+    ],
 ];

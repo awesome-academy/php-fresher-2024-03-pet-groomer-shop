@@ -8,6 +8,7 @@ use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PetController;
 use App\Http\Controllers\PetServiceController;
+use App\Http\Controllers\PetServicePriceController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -56,6 +57,12 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('coupon', CouponController::class)->names('coupon');
 
     Route::resource('pet-service', PetServiceController::class)->names('pet-service');
+
+    Route::resource('coupon', CouponController::class)->names('coupon');
+
+    Route::resource('pet-service', PetServiceController::class)->names('pet-service');
+
+    Route::resource('pet-service.pet-service-price', PetServicePriceController::class)->names('pet-service-price');
 
     Route::middleware(['admin'])->group(function () {
         Route::resource('role', RoleController::class)->names('role');

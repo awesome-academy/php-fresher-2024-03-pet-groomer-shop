@@ -14,6 +14,7 @@ class PetServicePrice extends Model
 
     protected $primaryKey = 'pet_service_price_id';
     protected $table = 'pet_service_prices';
+    protected $guarded = [];
 
     public function createdBy(): BelongsTo
     {
@@ -23,5 +24,20 @@ class PetServicePrice extends Model
     public function petService(): BelongsTo
     {
         return $this->belongsTo(PetService::class, 'pet_service_id', 'pet_service_id');
+    }
+
+    public static function checkExistWeight($petServiceID, $weight): bool
+    {
+        return self::where('pet_service_id', $petServiceID)->where('pet_service_weight', $weight)->exists();
+    }
+
+    public function getPriceFormatAttribute()
+    {
+        return formatNumber($this->pet_service_price, 'VND');
+    }
+
+    public function getWeightFormatAttribute()
+    {
+        return formatNumber($this->pet_service_weight, 'KG');
     }
 }

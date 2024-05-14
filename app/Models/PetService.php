@@ -38,4 +38,9 @@ class PetService extends Model
             'order_id'
         )->with(['pet_service_price'])->withTimestamps();
     }
+
+    public static function isValid($petServiceID): bool
+    {
+        return self::where('pet_service_id', $petServiceID)->exists();
+    }
 }

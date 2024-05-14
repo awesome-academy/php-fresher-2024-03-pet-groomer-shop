@@ -1,8 +1,3 @@
-@php
-    $activeMenu = \App\Enums\StatusEnum::getTranslated();
-    $ADMIN = \App\Enums\RoleEnum::ADMIN;
-@endphp
-
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-500 leading-tight">
@@ -49,6 +44,11 @@
                                         <a
                                             href="{{ route('pet-service.edit', ['pet_service' => $petService->pet_service_id]) }}">
                                             <button class="btn btn-success">{{ __('Update') }}</button></a>
+
+                                        <a
+                                            href="{{ route('pet-service-price.index', ['pet_service' => $petService->pet_service_id]) }}">
+                                            <button
+                                                class="btn btn-primary">{{ __('pet-service-price.pet_service_price') }}</button></a>
 
                                         <button data-id={{ $petService->pet_service_id }}
                                             class="btn btn-danger delete-pet-service-btn">{{ __('Delete') }}</button>
