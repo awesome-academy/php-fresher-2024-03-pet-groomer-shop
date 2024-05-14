@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\PaginationEnum;
 use App\Http\Requests\PetServiceRequest;
 use App\Models\PetService;
 use App\Models\User;
@@ -19,7 +18,7 @@ class PetServiceController extends Controller
      */
     public function index()
     {
-        $petServices = PetService::paginate(PaginationEnum::TEN);
+        $petServices = PetService::paginate(config('constant.data_table.item_per_page'));
 
         return view('pet-service.index', ['petServices' => $petServices]);
     }

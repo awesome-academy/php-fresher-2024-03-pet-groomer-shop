@@ -63,3 +63,16 @@ if (!function_exists('formatQuery')) {
         return $conditions;
     }
 }
+
+if (!function_exists('formatSelectWeightPrice')) {
+    function formatSelectWeightPrice()
+    {
+        $weightPrice = config('constant.pet_price_weight');
+        $formatWeightPrice = [];
+        foreach ($weightPrice as $value) {
+            $formatWeightPrice[trans('Less') . ' ' . $value . ' KG'] = $value;
+        }
+
+        return $formatWeightPrice;
+    }
+}

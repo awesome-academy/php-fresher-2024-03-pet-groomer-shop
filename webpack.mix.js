@@ -19,6 +19,7 @@ mix.js(
         "resources/js/pet.js",
         "resources/js/coupon.js",
         "resources/js/pet-service.js",
+        "resources/js/pet-service-price.js",
     ],
     "public/js/app.js"
 ).postCss("resources/css/app.css", "public/css", [

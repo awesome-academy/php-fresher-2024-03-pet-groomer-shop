@@ -128,5 +128,7 @@
     "To Time": "To Time",
     "Assigned": "Assigned",
     "Search Pet": "Search Pet",
-    "All": "All"
+    "All": "All",
+    "Less" : "Less than",
+    "More" : "More than"
 }
