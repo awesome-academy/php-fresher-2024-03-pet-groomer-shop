@@ -21,8 +21,8 @@ class UserController extends Controller
 {
     public function index(Request $request): View
     {
-        $users = User::withoutGlobalScope(ActiveUserScope::class);
         $conditions = formatQuery($request->query());
+        $users = User::withoutGlobalScope(ActiveUserScope::class)->where($conditions);
         $users = $users->where($conditions)
             ->orderBy('created_at', 'desc')
             ->paginate(config('constant.data_table.item_per_page'))->withQueryString();
@@ -31,6 +31,9 @@ class UserController extends Controller
         $roles['all'] = '';
         $roleEnum = array_flip(\App\Enums\RoleEnum::getConstants());
         $oldInput = $request->all();
+        $roles = Role::pluck('role_id', 'role_name');
+        $roles[__('All')] = '';
+        $roleEnum = array_flip(\App\Enums\RoleEnum::getConstants());
 
         return view(
             'user.index',
@@ -39,7 +42,6 @@ class UserController extends Controller
                 'oldInput' => $oldInput,
                 'roles' => $roles,
                 'roleEnum' => $roleEnum,
-                'oldInput' => $oldInput,
             ]
         );
     }

@@ -37,6 +37,7 @@ class PetController extends Controller
             'petTypesSelected' => $petTypesSelected,
             'petTypesSelectedExtra' => $petTypesSelectedExtra,
             'oldInput' => $oldInput,
+            'petTypesSelectedExtra' => $petTypesSelectedExtra,
         ]);
     }
 
@@ -77,6 +78,10 @@ class PetController extends Controller
             $data['is_active'] = $request->has('is_active') ? 1 : 0;
 
             DB::table('pets')->insert($data);
+
+            if ($userIDInput) {
+                return redirect()->route('pet.index')->with('success', __('Pet created successfully'));
+            }
 
             if ($userIDInput) {
                 return redirect()->route('pet.index')->with('success', __('Pet created successfully'));
@@ -126,7 +131,9 @@ class PetController extends Controller
             $redirectValue = $request->input(
                 'redirect_pet_index'
             );
+
             $data['is_active'] = $request->has('is_active') ? 1 : 0;
+
             $pet->update($data);
 
             if ((int) $redirectValue === 1) {

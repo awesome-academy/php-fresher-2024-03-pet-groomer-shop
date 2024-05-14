@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BreedController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
@@ -63,6 +64,14 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('pet-service', PetServiceController::class)->names('pet-service');
 
     Route::resource('pet-service.pet-service-price', PetServicePriceController::class)->names('pet-service-price');
+
+    Route::resource('coupon', CouponController::class)->names('coupon');
+
+    Route::resource('pet-service', PetServiceController::class)->names('pet-service');
+
+    Route::resource('pet-service.pet-service-price', PetServicePriceController::class)->names('pet-service-price');
+
+    Route::resource('breed', BreedController::class)->names('breed');
 
     Route::middleware(['admin'])->group(function () {
         Route::resource('role', RoleController::class)->names('role');
