@@ -129,6 +129,9 @@
     "Assigned": "Assigned",
     "Search Pet": "Search Pet",
     "All": "All",
-    "Less" : "Less than",
-    "More" : "More than"
+    "Less": "Less than",
+    "More": "More than",
+    "Management Page": "Management Page",
+    "Home": "Home",
+    "Profile": "Profile"
 }

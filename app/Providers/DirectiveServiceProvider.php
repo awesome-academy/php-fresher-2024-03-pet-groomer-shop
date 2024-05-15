@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Enums\RoleEnum;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
@@ -29,7 +30,28 @@ class DirectiveServiceProvider extends ServiceProvider
         });
 
         Blade::directive('endadmin', function () {
-            return '<?php endif; ?>';
+            return $this->getEndPhp();
         });
+
+        Blade::directive('notcustomer', function () {
+            return '<?php if(auth()->check() && auth()->user()->role_id !== ' . RoleEnum::CUSTOMER . '): ?>';
+        });
+
+        Blade::directive('endnotcustomer', function () {
+            return $this->getEndPhp();
+        });
+
+        Blade::directive('customer', function () {
+            return '<?php if(auth()->check() && auth()->user()->role_id === ' . RoleEnum::CUSTOMER . '): ?>';
+        });
+
+        Blade::directive('endcustomer', function () {
+            return $this->getEndPhp();
+        });
+    }
+
+    public function getEndPhp()
+    {
+        return '<?php endif; ?>';
     }
 }
