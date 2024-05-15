@@ -8,6 +8,6 @@ class LandingPageController extends Controller
 {
     public function landingPage(Request $request)
     {
-        return view('welcome');
+        return view('customer.home.index');
     }
 }

@@ -1,21 +1,15 @@
 <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-center h-16 items-center gap-4">
-            <!-- Logo -->
-            <div class="shrink-0 flex items-center">
-                <a href="{{ route('dashboard') }}">
-                    <x-application-logo class="block h-10 w-auto fill-current text-gray-600" />
-                </a>
-            </div>
-            <h1 class="text-xl font-semibold mt-1">{{ __('Management Page') }}</h1>
-        </div>
-    </div>
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
-
-                @include('layouts.includes.navigation-link')
+                <!-- Logo -->
+                <div class="shrink-0 flex items-center">
+                    <a href="{{ route('home') }}">
+                        <x-application-logo class="block h-10 w-auto fill-current text-gray-600" />
+                    </a>
+                </div>
+                @include('layouts.includes.customer-navigation-link')
             </div>
 
             <!-- Settings Dropdown -->
@@ -54,10 +48,21 @@
 
                     <x-slot name="content">
 
-                        <x-dropdown-link :href="route('home')">{{ __('Go Home') }} </x-dropdown-link>
 
+                        @guest
+                            <x-dropdown-link :href="route('login')">
+                                {{ __('Log in') }}
+                            </x-dropdown-link>
+                        @endguest
                         <!-- Authentication -->
                         @auth
+                            <x-dropdown-link :href="route('customer-profile.index')">{{ __('Profile') }} </x-dropdown-link>
+
+                            @notcustomer
+                                <x-dropdown-link :href="route('dashboard')">
+                                    {{ __('Dashboard') }}
+                                </x-dropdown-link>
+                            @endnotcustomer
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
 
@@ -92,7 +97,7 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            @include('layouts.includes.reponsive-navigation-link')
+            @include('layouts.includes.customer-reponsive-navigation-link')
         </div>
 
         <!-- Responsive Settings Options -->

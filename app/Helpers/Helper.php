@@ -1,5 +1,8 @@
 <?php
 
+use App\Enums\RoleEnum;
+use Illuminate\Support\Facades\Auth;
+
 if (!function_exists('formatDate')) {
     function formatDate($date, string $format = 'd/m/Y')
     {
@@ -74,5 +77,16 @@ if (!function_exists('formatSelectWeightPrice')) {
         }
 
         return $formatWeightPrice;
+    }
+}
+
+if (!function_exists('isCustomer')) {
+    function isCustomer()
+    {
+        if (Auth::check()) {
+            return Auth::user()->role_id === RoleEnum::CUSTOMER;
+        }
+
+        return false;
     }
 }

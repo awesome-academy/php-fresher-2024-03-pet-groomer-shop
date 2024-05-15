@@ -25,16 +25,31 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [LandingPageController::class, 'landingPage']);
+Route::get('/', [LandingPageController::class, 'landingPage'])->name('home');
 
+Route::prefix('/customer')->group(function () {
+    Route::middleware(['auth'])->group(function () {
+        Route::resource('customer-profile', CustomerProfileController::class)->names('customer-profile');
+    });
+});
 
+Route::middleware(['auth', 'not.customer'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'dashboard'])
+        ->name('dashboard');
 
-Route::get('/dashboard', [DashboardController::class, 'dashboard'])
-    ->middleware(['auth'])
-    ->name('dashboard');
-
-Route::middleware(['auth'])->group(function () {
     Route::resource('user', UserController::class)->names('user');
+
+    Route::get('/pet', [PetController::class, 'index'])->name('pet.index');
+
+    Route::get('/pet/create', [PetController::class, 'create'])->name('pet.create');
+
+    Route::post('/pet/store/{user}', [PetController::class, 'store'])->name('pet.store');
+
+    Route::get('/pet/{id}/edit', [PetController::class, 'edit'])->name('pet.edit');
+
+    Route::put('/pet/{id}/update/{user}', [PetController::class, 'update'])->name('pet.update');
+
+    Route::delete('/pet/{id}/delete/{user}', [PetController::class, 'destroy'])->name('pet.delete');
 
     Route::resource('employee', EmployeeController::class)->names('employee');
     Route::get(
@@ -73,6 +88,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('breed', BreedController::class)->names('breed');
 
+    Route::resource('coupon', CouponController::class)->names('coupon');
+
     Route::middleware(['admin'])->group(function () {
         Route::resource('role', RoleController::class)->names('role');
         // Permission
@@ -87,19 +104,6 @@ Route::middleware(['auth'])->group(function () {
         )->name('permission.attach-role');
     });
 });
-
-Route::get('/pet', [PetController::class, 'index'])->name('pet.index');
-
-Route::get('/pet/create', [PetController::class, 'create'])->name('pet.create');
-
-Route::post('/pet/store/{user}', [PetController::class, 'store'])->name('pet.store');
-
-Route::get('/pet/{id}/edit', [PetController::class, 'edit'])->name('pet.edit');
-
-Route::put('/pet/{id}/update/{user}', [PetController::class, 'update'])->name('pet.update');
-
-Route::delete('/pet/{id}/delete/{user}', [PetController::class, 'destroy'])->name('pet.delete');
-
 
 Route::get('language/{lang}', [LanguageController::class, 'setLanguage'])->name('language.set');
 
