@@ -68,6 +68,9 @@ class PetController extends Controller
     {
         try {
             $data = $request->except('_token');
+            if (!Breed::checkValidPetType($data['breed_id'], $data['pet_type'])) {
+                throw new Exception(trans('breed.invalid_type'));
+            }
 
             if (Gate::denies('create', User::class)) {
                 throw new Exception(trans('permission.create_fail'));
@@ -78,10 +81,6 @@ class PetController extends Controller
             $data['is_active'] = $request->has('is_active') ? 1 : 0;
 
             DB::table('pets')->insert($data);
-
-            if ($userIDInput) {
-                return redirect()->route('pet.index')->with('success', __('Pet created successfully'));
-            }
 
             if ($userIDInput) {
                 return redirect()->route('pet.index')->with('success', __('Pet created successfully'));
@@ -123,6 +122,10 @@ class PetController extends Controller
     {
         try {
             $pet = Pet::findOrFail($id);
+            if (!Breed::checkValidPetType($request->breed_id, $request->pet_type)) {
+                throw new Exception(trans('breed.invalid_type'));
+            }
+
             if (Gate::denies('update', $pet)) {
                 throw new Exception(trans('permission.update_fail'));
             }
@@ -131,8 +134,16 @@ class PetController extends Controller
             $redirectValue = $request->input(
                 'redirect_pet_index'
             );
-
             $data['is_active'] = $request->has('is_active') ? 1 : 0;
+
+            $pet->update($data);
+
+            if ((int) $redirectValue === 1) {
+                return redirect()->route('pet.index')->with(
+                    'success',
+                    __('Pet updated successfully')
+                );
+            }
 
             $pet->update($data);
 

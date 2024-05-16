@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\BreedController;
 use App\Http\Controllers\CouponController;
+use App\Http\Controllers\Customer\CareOrderController;
+use App\Http\Controllers\Customer\CustomerPetController;
+use App\Http\Controllers\Customer\CustomerProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LandingPageController;
@@ -30,6 +33,9 @@ Route::get('/', [LandingPageController::class, 'landingPage'])->name('home');
 Route::prefix('/customer')->group(function () {
     Route::middleware(['auth'])->group(function () {
         Route::resource('customer-profile', CustomerProfileController::class)->names('customer-profile');
+
+        Route::resource('care-order', CareOrderController::class)->names('care-order');
+        Route::resource('customer.pet', CustomerPetController::class)->names('customer-pet');
     });
 });
 
@@ -89,6 +95,14 @@ Route::middleware(['auth', 'not.customer'])->group(function () {
     Route::resource('breed', BreedController::class)->names('breed');
 
     Route::resource('coupon', CouponController::class)->names('coupon');
+
+    Route::resource('coupon', CouponController::class)->names('coupon');
+
+    Route::resource('pet-service', PetServiceController::class)->names('pet-service');
+
+    Route::resource('pet-service.pet-service-price', PetServicePriceController::class)->names('pet-service-price');
+
+    Route::resource('breed', BreedController::class)->names('breed');
 
     Route::middleware(['admin'])->group(function () {
         Route::resource('role', RoleController::class)->names('role');

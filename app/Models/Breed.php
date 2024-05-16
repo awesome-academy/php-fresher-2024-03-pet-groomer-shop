@@ -50,4 +50,11 @@ class Breed extends Model
         return self::where('breed_name', $request->breed_name)
             ->where('breed_type', $request->breed_type)->exists();
     }
+
+    public static function checkValidPetType($breedID, $petType): bool
+    {
+        $breed = self::find($breedID);
+
+        return (int) $breed->breed_type === (int) $petType;
+    }
 }

@@ -1,11 +1,11 @@
 <x-modal :title="__('Show Pet')" :btnText="__('Show Pet')" btnClass="btn-sm btn-success">
     <form method="POST" class="w-full flex flex-col md:grid grid-cols-12 ga-2 md:gap-4"
-        action="{{ route('pet.update', ['id' => $pet->pet_id, 'user' => $pet->user_id]) }}">
+        action="{{ route('customer-pet.update', ['customer' => auth()->user()->user_id, 'pet' => $pet->pet_id]) }}">
         @csrf
         @method('PUT')
 
-        <x-input id="redirect_pet_index" class="block mt-1 w-full" type="hidden" name="redirect_pet_index" :value="$redirect_pet_index ?? 0" required
-            autofocus />
+        <x-input id="redirect_pet_index" class="block mt-1 w-full" type="hidden" name="redirect_pet_index"
+            :value="$redirect_pet_index ?? 0" required autofocus />
 
         <div class="col-span-6">
             <x-label required for="pet_name" :value="__('Pet Name')" />

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\StatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,6 +29,8 @@ class Pet extends Model
         'pet_gender',
         'pet_weight',
         'pet_birthdate',
+        'breed_id',
+        'user_id',
     ];
 
     public function user(): BelongsTo
@@ -53,5 +56,10 @@ class Pet extends Model
     public function careOrders(): HasMany
     {
         return $this->hasMany(CareOrder::class, 'pet_id', 'pet_id');
+    }
+
+    public function getIsActiveNameAttribute()
+    {
+        return StatusEnum::getTranslated()[$this->is_active];
     }
 }

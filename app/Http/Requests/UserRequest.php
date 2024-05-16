@@ -32,7 +32,7 @@ class UserRequest extends FormRequest
             'user_address' => ['string', 'min:3', 'max:255', 'nullable'],
             'user_image' => ['image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048', 'nullable'],
             'user_birthdate' => ['date', 'before:' . now()->subYears(8)->toDateString(), 'nullable'],
-            'branch_id' => ['required', 'exists:branches,branch_id'],
+            'branch_id' => [Rule::requiredIf($this->has('branch_id')), 'exists:branches,branch_id'],
             'user_password' => [Rule::requiredIf($this->has('user_password')), 'string', 'min:8', 'confirmed'],
             'username' => [Rule::requiredIf($this->has('username')), 'string', 'min:3', 'max:255', 'unique:users'],
             'user_email' => [Rule::requiredIf($this->has('user_email')), 'string', 'email', 'max:255', 'unique:users'],

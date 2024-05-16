@@ -140,6 +140,7 @@ class UserController extends Controller
             }
 
             $user->fill($data);
+
             $user->is_active  = $request->has('is_active') ? 1 : 0;
 
             if ($user->role_id === RoleEnum::ADMIN) {
