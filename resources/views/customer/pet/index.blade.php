@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-customer-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-500 leading-tight">
             {{ __('Pet') }}
@@ -9,18 +9,17 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-x-auto shadow-sm sm:rounded-lg">
                 <div class="p-6  border-b ">
-                    <a href="{{ route('pet.create') }}">
+                    <a href="{{ route('customer-pet.create', ['customer' => Auth::user()->user_id]) }}">
                         <button class="btn btn-sm btn-primary mb-5">{{ __('pet.create') }}</button></a>
                     <x-auth-validation-errors class="mb-4" :errors="$errors" />
                     <x-alert-session />
-                    @include('pet.includes.search')
+                    @include('customer.pet.includes.search')
                     <table class="min-w-full  text-left text-sm font-light text-surface m-4">
                         <thead class="border-b  font-medium ">
                             <tr>
                                 <th scope="col" class="px-6 py-4">#</th>
                                 <th scope="col" class="px-6 py-4">{{ __('Pet Name') }}</th>
                                 <th scope="col" class="px-6 py-4">{{ __('Pet Type') }}</th>
-                                <th scope="col" class="px-6 py-4">{{ __('Pet Breed') }}</th>
                                 <th scope="col" class="px-6 py-4">{{ __('Pet Birthdate') }}</th>
                                 <th scope="col" class="px-6 py-4">{{ __('Is Active') }}</th>
                                 <th scope="col" class="px-6 py-4">{{ __('Pet Owner') }}</th>
@@ -33,16 +32,15 @@
                         <tbody>
 
                             @forelse ($pets as $pet)
-                                <tr class="border-b  ">
+                                <tr class="border-b">
                                     <td class="whitespace-nowrap px-6 py-4">{{ $pet->pet_id }}</td>
                                     <td class="whitespace-nowrap px-6 py-4 font-medium">{{ $pet->pet_name }}</td>
                                     <td class="whitespace-nowrap px-6 py-4">{{ $petTypes[$pet->pet_type] }}</td>
-                                    <td class="whitespace-nowrap px-6 py-4">{{ $pet->breed_id }}</td>
                                     <td class="whitespace-nowrap px-6 py-4">{{ formatDate($pet->pet_birthdate) }}</td>
                                     <td
                                         class="whitespace-nowrap px-6 py-4
                                         {{ $pet->is_active ? ' text-green-500' : ' text-red-500' }}">
-                                        {{ $pet->i }}</td>
+                                        {{ $pet->is_active_name }}</td>
                                     <td class="whitespace-nowrap px-6 py-4">
 
                                         <a class="text-indigo-600"
@@ -53,13 +51,14 @@
 
                                     <td class="whitespace-nowrap px-6 py-4 flex gap-2">
 
-                                        @include('user.includes.show-pet', [
+                                        @include('customer.pet.includes.show', [
                                             'pet' => $pet,
                                             'redirect_pet_index' => 1,
                                         ])
 
-                                        <button type="submit" onclick="window.pet.delete({{ $pet->pet_id }})"
-                                            class="btn btn-danger">
+                                        <button type="submit" data-user-id="{{ $pet->user->user_id }}"
+                                            data-pet-id="{{ $pet->pet_id }}"
+                                            class="btn btn-danger delete-customer-pet-btn">
                                             {{ __('Delete') }}
                                         </button>
 
@@ -82,4 +81,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+</x-customer-layout>

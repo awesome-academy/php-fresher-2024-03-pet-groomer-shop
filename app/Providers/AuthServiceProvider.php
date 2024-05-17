@@ -28,7 +28,9 @@ class AuthServiceProvider extends ServiceProvider
         User::class => UserPolicy::class,
         Coupon::class => CouponPolicy::class,
         PetService::class => PetServicePolicy::class,
+        PetService::class => PetServicePolicy::class,
         PetServicePrice::class => PetServicePricePolicy::class,
+        Breed::class => BreedPolicy::class,
         Breed::class => BreedPolicy::class,
     ];
 

@@ -57,6 +57,8 @@
                         <!-- Authentication -->
                         @auth
                             <x-dropdown-link :href="route('customer-profile.index')">{{ __('Profile') }} </x-dropdown-link>
+                            <x-dropdown-link :href="route('customer-pet.index', ['customer'=>Auth::user()->user_id])">{{ __('My Pet') }} </x-dropdown-link>
+
 
                             @notcustomer
                                 <x-dropdown-link :href="route('dashboard')">
