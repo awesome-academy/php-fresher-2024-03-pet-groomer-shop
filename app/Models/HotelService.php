@@ -13,6 +13,8 @@ class HotelService extends Model
     protected $primaryKey = 'hotel_service_id';
     protected $table = 'hotel_services';
 
+    protected $guarded = [];
+
     protected $casts = [
         'is_active' => 'boolean',
     ];
