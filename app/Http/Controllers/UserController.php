@@ -59,7 +59,14 @@ class UserController extends Controller
             ['text' => trans('Create User'), 'url' => route('user.create')],
         ];
 
-        return view('user.create', ['roles' => $roles, 'branches' => $branches, 'breadcrumbItems' => $breadcrumbItems]);
+        return view(
+            'user.create',
+            [
+                'roles' => $roles,
+                'branches' => $branches,
+                'breadcrumbItems' => $breadcrumbItems,
+            ]
+        );
     }
 
     public function store(UserRequest $request)
@@ -191,15 +198,8 @@ class UserController extends Controller
     private function getOptions()
     {
         $roles = Role::pluck('role_id', 'role_name');
-        if ($roles->isEmpty()) {
-            $roles = [];
-        }
 
         $branches = Branch::pluck('branch_id', 'branch_name');
-
-        if ($branches->isEmpty()) {
-            $branches = [];
-        }
 
         $breeds = Breed::pluck('breed_id', 'breed_name');
 

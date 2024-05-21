@@ -21,16 +21,11 @@ class CustomerPetController extends Controller
             ->paginate(config('constant.data_table.item_per_page'));
         $oldInput = $request->all();
         $breeds = Breed::pluck('breed_id', 'breed_name');
-
-        $petTypes = PetTypeEnum::getTranslated();
-        $petTypesSelected = array_flip($petTypes);
-        $petTypesSelectedExtra = $petTypesSelected;
-        $petTypesSelectedExtra[__('All')] = '';
+        [$petTypesSelected, $petTypesSelectedExtra] = $this->getPetTypeOptions();
 
         return view('customer.pet.index', [
             'pets' => $pets,
             'breeds' => $breeds,
-            'petTypes' => $petTypes,
             'petTypesSelected' => $petTypesSelected,
             'oldInput' => $oldInput,
             'petTypesSelectedExtra' => $petTypesSelectedExtra,
@@ -158,5 +153,15 @@ class CustomerPetController extends Controller
         } catch (\Exception $e) {
             flashMessage('error', $e->getMessage());
         }
+    }
+
+    private function getPetTypeOptions()
+    {
+        $petTypes = PetTypeEnum::getTranslated();
+        $petTypesSelected = array_flip($petTypes);
+        $petTypesSelectedExtra = $petTypesSelected;
+        $petTypesSelectedExtra[__('All')] = '';
+
+        return [$petTypesSelected, $petTypesSelectedExtra];
     }
 }

@@ -15,6 +15,7 @@ class CareOrder extends Model
 
     protected $primaryKey = 'order_id';
     protected $table = 'care_orders';
+    protected $guarded = [];
 
     public function coupon(): BelongsTo
     {
@@ -58,7 +59,7 @@ class CareOrder extends Model
             'care_order_detail',
             'order_id',
             'pet_service_id'
-        )->withPivot(['pet_service_price'])->withTimestamps();
+        )->withPivot(['pet_service_price']);
     }
 
     public function getOrderStatusNameAttribute()

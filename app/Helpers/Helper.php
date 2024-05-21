@@ -80,6 +80,17 @@ if (!function_exists('formatSelectWeightPrice')) {
     }
 }
 
+if (!function_exists('getUser')) {
+    function getUser()
+    {
+        if (Auth::check()) {
+            return Auth::user();
+        }
+
+        return null;
+    }
+}
+
 if (!function_exists('isCustomer')) {
     function isCustomer()
     {
@@ -88,5 +99,17 @@ if (!function_exists('isCustomer')) {
         }
 
         return false;
+    }
+}
+
+if (!function_exists('flatten')) {
+    function flatten(array $array)
+    {
+        $return = [];
+        array_walk_recursive($array, function ($a) use (&$return) {
+            $return[] = $a;
+        });
+
+        return $return;
     }
 }
