@@ -86,44 +86,6 @@ Route::middleware(['auth', 'not.customer'])->group(function () {
 
     Route::resource('coupon', CouponController::class)->names('coupon');
 
-    Route::resource('coupon', CouponController::class)->names('coupon');
-
-    Route::resource('pet-service', PetServiceController::class)->names('pet-service');
-
-    Route::resource('coupon', CouponController::class)->names('coupon');
-
-    Route::resource('pet-service', PetServiceController::class)->names('pet-service');
-
-    Route::resource('pet-service.pet-service-price', PetServicePriceController::class)->names('pet-service-price');
-
-    Route::resource('coupon', CouponController::class)->names('coupon');
-
-    Route::resource('pet-service', PetServiceController::class)->names('pet-service');
-
-    Route::resource('pet-service.pet-service-price', PetServicePriceController::class)->names('pet-service-price');
-
-    Route::resource('breed', BreedController::class)->names('breed');
-
-    Route::resource('coupon', CouponController::class)->names('coupon');
-
-    Route::resource('coupon', CouponController::class)->names('coupon');
-
-    Route::resource('pet-service', PetServiceController::class)->names('pet-service');
-
-    Route::resource('pet-service.pet-service-price', PetServicePriceController::class)->names('pet-service-price');
-
-    Route::resource('breed', BreedController::class)->names('breed');
-
-    Route::resource('coupon', CouponController::class)->names('coupon');
-
-    Route::resource('pet-service', PetServiceController::class)->names('pet-service');
-
-    Route::resource('pet-service.pet-service-price', PetServicePriceController::class)->names('pet-service-price');
-
-    Route::resource('breed', BreedController::class)->names('breed');
-
-    Route::resource('coupon', CouponController::class)->names('coupon');
-
     Route::resource('pet-service', PetServiceController::class)->names('pet-service');
 
     Route::resource('pet-service.pet-service-price', PetServicePriceController::class)->names('pet-service-price');

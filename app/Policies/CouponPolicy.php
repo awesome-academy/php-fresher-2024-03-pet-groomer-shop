@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\RoleEnum;
 use App\Models\Coupon;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
