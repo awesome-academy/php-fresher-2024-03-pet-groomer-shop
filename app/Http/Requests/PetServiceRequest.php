@@ -24,7 +24,7 @@ class PetServiceRequest extends FormRequest
     public function rules()
     {
         return [
-            'pet_service_name' => 'required|string|min:2|max:255|unique:pet_services,pet_service_name',
+            'pet_service_name' => 'required|string|min:2|max:255',
             'pet_service_description' => 'nullable',
         ];
     }

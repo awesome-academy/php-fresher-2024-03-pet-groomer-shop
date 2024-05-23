@@ -12,7 +12,7 @@
                     <a href="{{ route('user.create') }}">
                         <button class="btn btn-sm btn-primary mb-5">{{ __('Create User') }}</button></a>
 
-                    <x-alert-session />
+                    <x-display-infor />
 
                     @include('employee.includes.search')
                     <table class="min-w-full text-left text-sm font-light text-surface ">
@@ -50,8 +50,8 @@
 
                                         </a>
                                         @if ($employee->user_id != Auth::user()->user_id)
-                                            <button onclick="window.user.delete({{ $employee->user_id }})"
-                                                type="button" class="btn btn-danger">
+                                            <button data-id="{{ $employee->user_id }}" type="button"
+                                                class="btn btn-danger delete-user-btn">
                                                 {{ __('Delete') }}
                                             </button>
                                         @endif

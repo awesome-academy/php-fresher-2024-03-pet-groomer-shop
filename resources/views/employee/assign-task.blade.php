@@ -10,7 +10,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <x-alert-session />
-                    <x-auth-validation-errors class="mb-4" :errors="$errors" />
+                    <x-display-infor />
 
                     <table class="min-w-full text-left text-sm font-light text-surface ">
                         <thead class="border-b  font-medium ">
@@ -41,10 +41,10 @@
                                         {{ formatNumber($order->order_total_price, 'VNĐ') }}</td>
 
                                     <td class="whitespace-nowrap flex gap-3 px-6 py-4">
-                                        @if ($order->assignTask()->count() > 0)
+                                        @if ($order->assignTask->count() > 0)
                                             @include('employee.includes.update-assign-task-modal', [
-                                                'fromTime' => $order->assignTask()->first()->pivot->from_time,
-                                                'toTime' => $order->assignTask()->first()->pivot->to_time,
+                                                'fromTime' => $order->assignTask->first()->pivot->from_time,
+                                                'toTime' => $order->assignTask->first()->pivot->to_time,
                                                 'order' => $order,
                                             ])
                                         @else

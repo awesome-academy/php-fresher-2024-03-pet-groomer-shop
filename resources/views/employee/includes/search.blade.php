@@ -1,7 +1,7 @@
 <div>
     <form class=" flex flex-wrap md:grid grid-cols-12 gap-4 my-4 mb-10" action="{{ route('employee.index') }}" method="GET">
         <h2 class="col-span-12 font-bold text-xl">
-            {{ __('Search Users') }}
+            {{ __('Search') }}
         </h2>
         <div class="col-span-6">
             <x-label for="user_email" :value="__('Email')" />

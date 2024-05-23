@@ -57,7 +57,7 @@
                         <!-- Authentication -->
                         @auth
                             <x-dropdown-link :href="route('customer-profile.index')">{{ __('Profile') }} </x-dropdown-link>
-                            <x-dropdown-link :href="route('customer-pet.index', ['customer'=>Auth::user()->user_id])">{{ __('My Pet') }} </x-dropdown-link>
+                            <x-dropdown-link :href="route('customer-pet.index', ['customer' => Auth::user()->user_id])">{{ __('My Pet') }} </x-dropdown-link>
 
 
                             @notcustomer
@@ -113,16 +113,28 @@
             </div>
 
             <div class="mt-3 space-y-1">
-                <!-- Authentication -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
+                @auth
+                    <x-responsive-nav-link :href="route('customer-profile.index')">{{ __('Profile') }} </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('customer-pet.index', ['customer' => Auth::user()->user_id])">{{ __('My Pet') }} </x-responsive-nav-link>
 
-                    <x-responsive-nav-link :href="route('logout')"
-                        onclick="event.preventDefault();
+
+                    @notcustomer
+                        <x-responsive-nav-link :href="route('dashboard')">
+                            {{ __('Dashboard') }}
+                        </x-responsive-nav-link>
+                    @endnotcustomer
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+
+                        <x-responsive-nav-link :href="route('logout')"
+                            onclick="event.preventDefault();
                                         this.closest('form').submit();">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
-                </form>
+                            {{ __('Log Out') }}
+                        </x-responsive-nav-link>
+                    </form>
+                @endauth
+                <!-- Authentication -->
+
             </div>
         </div>
     </div>

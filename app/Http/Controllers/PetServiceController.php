@@ -94,8 +94,7 @@ class PetServiceController extends Controller
                 throw new Exception(trans('permission.update_fail'));
             }
 
-            $petService->fill($request->all());
-            $petService->save();
+            $petService->update($request->all());
 
             return redirect()
                 ->route('pet-service.index')
