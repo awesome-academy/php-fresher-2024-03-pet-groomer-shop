@@ -2,7 +2,6 @@
 
 namespace App\Policies;
 
-use App\Enums\PermissionEnum;
 use App\Models\Coupon;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -42,7 +41,7 @@ class CouponPolicy
      */
     public function create(User $user)
     {
-        return $user->hasPermission(PermissionEnum::CREATE_COUPON);
+        return $user->role_id === RoleEnum::ADMIN || $user->role_id === RoleEnum::MANGER;
     }
 
     /**
@@ -54,7 +53,7 @@ class CouponPolicy
      */
     public function update(User $user, Coupon $coupon)
     {
-        return $user->hasPermission(PermissionEnum::UPDATE_COUPON);
+        return $user->role_id === RoleEnum::ADMIN || $user->role_id === RoleEnum::MANGER;
     }
 
     /**
@@ -66,7 +65,7 @@ class CouponPolicy
      */
     public function delete(User $user, Coupon $coupon)
     {
-        return $user->hasPermission(PermissionEnum::DELETE_COUPON);
+        return $user->role_id === RoleEnum::ADMIN || $user->role_id === RoleEnum::MANGER;
     }
 
     /**

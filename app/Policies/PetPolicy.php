@@ -2,7 +2,6 @@
 
 namespace App\Policies;
 
-use App\Enums\PermissionEnum;
 use App\Enums\RoleEnum;
 use App\Models\Pet;
 use App\Models\User;
@@ -21,16 +20,18 @@ class PetPolicy
 
     public function create(User $user)
     {
-        return $user->hasPermission(PermissionEnum::CREATE_PET);
+        return $user->role_id === RoleEnum::ADMIN || $user->role_id === RoleEnum::MANGER;
     }
 
     public function update(User $user, Pet $pet)
     {
-        return $user->hasPermission(PermissionEnum::UPDATE_PET) || $user->user_id === $pet->user_id;
+        return $user->role_id === RoleEnum::ADMIN || $user->role_id === RoleEnum::MANGER
+            || $user->user_id === $pet->user_id;
     }
 
     public function delete(User $user, Pet $pet)
     {
-        return $user->hasPermission(PermissionEnum::DELETE_PET) || $user->user_id === $pet->user_id;
+        return $user->role_id === RoleEnum::ADMIN || $user->role_id === RoleEnum::MANGER
+            || $user->user_id === $pet->user_id;
     }
 }

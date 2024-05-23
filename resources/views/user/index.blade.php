@@ -12,7 +12,7 @@
                     <a href="{{ route('user.create') }}">
                         <button class="btn btn-sm btn-primary mb-5">{{ __('Create User') }}</button></a>
 
-                    <x-alert-session />
+                    <x-display-infor />
 
                     @include('user.includes.search')
                     <table class="min-w-full text-left text-sm font-light text-surface ">
