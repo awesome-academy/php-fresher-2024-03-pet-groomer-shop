@@ -13,6 +13,8 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/confirm-page.css') }}">
+
 
     <!-- Scripts -->
     @include('layouts.includes.script')
