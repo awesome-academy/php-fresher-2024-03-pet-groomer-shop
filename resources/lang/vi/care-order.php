@@ -17,4 +17,5 @@ return [
     'create_fail' => 'Tạo đơn chăm thú thất bại',
     'update_fail' => 'Cập nhật đơn chăm thú thất bại',
     'delete_fail' => 'Xóa đơn chăm thú thất bại',
+    'request_for' => 'Yêu cầu cho',
 ];

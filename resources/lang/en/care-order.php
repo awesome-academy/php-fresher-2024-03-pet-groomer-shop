@@ -17,4 +17,5 @@ return [
     'create_fail' => 'Create Care Order failed',
     'update_fail' => 'Update Care Order failed',
     'delete_fail' => 'Delete Care Order failed',
+    'request_for' => 'Request For',
 ];
