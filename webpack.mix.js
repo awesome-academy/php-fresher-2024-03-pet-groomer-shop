@@ -21,11 +21,15 @@ mix.js(
         "resources/js/pet-service.js",
         "resources/js/pet-service-price.js",
         "resources/js/breed.js",
+        "resources/js/care-order.js",
+        "resources/js/payment.js",
     ],
     "public/js/app.js"
-).postCss("resources/css/app.css", "public/css", [
-    require("tailwindcss"),
-    require("autoprefixer"),
-]);
+)
+    .postCss("resources/css/app.css", "public/css", [
+        require("tailwindcss"),
+        require("autoprefixer"),
+    ])
+    .sass("resources/css/confirm-page.scss", "public/css");
 
 mix.disableNotifications();

@@ -1,27 +1,79 @@
 <x-customer-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-500 leading-tight">
-            {{ __('Profile') }}
+            {{ __('Pet') }}
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    <div class="my-3">
-                        <x-alert-session />
-                    </div>
+            <div class="bg-white overflow-x-auto shadow-sm sm:rounded-lg">
+                <div class="p-6 border-b">
+                    <a href="{{ route('customer-pet.create', ['customer' => Auth::user()->user_id]) }}">
+                        <button class="btn btn-sm btn-primary mb-5">{{ __('pet.create') }}</button></a>
                     <x-auth-validation-errors class="mb-4" :errors="$errors" />
-                    <form method="POST" class="w-full grid grid-cols-12 gap-4"
-                        action="{{ route('customer-profile.update', ['customer_profile' => $user->user_id]) }}">
-                        @method('PUT')
-                        @csrf
+                    <x-alert-session />
+                    @include('customer.care-order.includes.search')
+                    <table class="min-w-full  text-left text-sm font-light text-surface m-4">
+                        <thead class="border-b  font-medium ">
+                            <tr>
+                                <th scope="col" class="px-6 py-4">#</th>
+                                <th scope="col" class="px-6 py-4">{{ __('Pet Name') }}</th>
+                                <th scope="col" class="px-6 py-4">{{ __('Pet Type') }}</th>
+                                <th scope="col" class="px-6 py-4">{{ __('Pet Birthdate') }}</th>
+                                <th scope="col" class="px-6 py-4">{{ __('Is Active') }}</th>
+                                <th scope="col" class="px-6 py-4">{{ __('Pet Owner') }}</th>
+
+                                <th scope="col" class="px-6 py-4">{{ __('Action') }}</th>
 
 
-                    </form>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @forelse ($pets as $pet)
+                                <tr class="border-b">
+                                    <td class="whitespace-nowrap px-6 py-4">{{ $pet->pet_id }}</td>
+                                    <td class="whitespace-nowrap px-6 py-4 font-medium">{{ $pet->pet_name }}</td>
+                                    <td class="whitespace-nowrap px-6 py-4">{{ $pet->pet_type_name }}</td>
+                                    <td class="whitespace-nowrap px-6 py-4">{{ formatDate($pet->pet_birthdate) }}</td>
+                                    <td
+                                        class="whitespace-nowrap px-6 py-4
+                                        {{ $pet->is_active ? ' text-green-500' : ' text-red-500' }}">
+                                        {{ $pet->is_active_name }}</td>
+                                    <td class="whitespace-nowrap px-6 py-4">
+
+                                        <a class="text-indigo-600"
+                                            href="{{ route('user.show', $pet->user->user_id) }}">
+                                            {{ $pet->user->user_email }}
+                                        </a>
+                                    </td>
+
+                                    <td class="whitespace-nowrap px-6 py-4 flex gap-2">
 
 
+                                        <a href="{{ route('care-order.request-page', ['pet' => $pet->pet_id]) }}">
+                                            <button class="btn btn-success" type="button">
+                                                {{ __('care-order.request') }}
+                                            </button>
+                                        </a>
+
+
+
+                                    </td>
+
+                                </tr>
+                            @empty
+                                <h4 class="text-center italic">{{ __('No pet found') }}</h4>
+                            @endforelse
+
+                        </tbody>
+
+                    </table>
+
+                    <div class="mt-3">
+                        {{ $pets->links() }}
+                    </div>
                 </div>
             </div>
         </div>

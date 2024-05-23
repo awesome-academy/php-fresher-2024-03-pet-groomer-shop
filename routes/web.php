@@ -5,6 +5,7 @@ use App\Http\Controllers\CouponController;
 use App\Http\Controllers\Customer\CareOrderController;
 use App\Http\Controllers\Customer\CustomerPetController;
 use App\Http\Controllers\Customer\CustomerProfileController;
+use App\Http\Controllers\Customer\PaymentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LandingPageController;
@@ -35,6 +36,17 @@ Route::prefix('/customer')->group(function () {
         Route::resource('customer-profile', CustomerProfileController::class)->names('customer-profile');
 
         Route::resource('care-order', CareOrderController::class)->names('care-order');
+        Route::get(
+            '/care-order/{pet}/request',
+            [CareOrderController::class, 'requestPage']
+        )
+            ->name('care-order.request-page');
+        Route::post('/care-order/{pet}/request', [CareOrderController::class, 'request'])->name('care-order.request');
+
+        Route::resource('pet.payment', PaymentController::class)->names('payment');
+        Route::get('/payment/coupon', [PaymentController::class, 'getCoupon'])->name('payment.coupon');
+        Route::get('/payment/confirm', [PaymentController::class, 'confirmPage'])->name('payment.confirm');
+
         Route::resource('customer.pet', CustomerPetController::class)->names('customer-pet');
     });
 });
@@ -95,6 +107,14 @@ Route::middleware(['auth', 'not.customer'])->group(function () {
     Route::resource('breed', BreedController::class)->names('breed');
 
     Route::resource('coupon', CouponController::class)->names('coupon');
+
+    Route::resource('coupon', CouponController::class)->names('coupon');
+
+    Route::resource('pet-service', PetServiceController::class)->names('pet-service');
+
+    Route::resource('pet-service.pet-service-price', PetServicePriceController::class)->names('pet-service-price');
+
+    Route::resource('breed', BreedController::class)->names('breed');
 
     Route::resource('coupon', CouponController::class)->names('coupon');
 

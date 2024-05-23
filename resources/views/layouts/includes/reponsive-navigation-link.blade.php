@@ -11,7 +11,7 @@
       {{ __('employee.employee') }}
   </x-responsive-nav-link>
   <x-responsive-nav-link :href="route('pet-service.index')" :active="request()->routeIs('pet-service.index')">
-      {{ __('pet-service.index') }}
+      {{ __('pet-service.pet_service') }}
   </x-responsive-nav-link>
   <x-responsive-nav-link :href="route('coupon.index')" :active="request()->routeIs('coupon.index')">
       {{ __('coupon.coupon') }}

@@ -8,7 +8,7 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-x-auto shadow-sm sm:rounded-lg">
-                <div class="p-6  border-b ">
+                <div class="p-6 bg-white border-b border-gray-200">
                     <a href="{{ route('customer-pet.create', ['customer' => Auth::user()->user_id]) }}">
                         <button class="btn btn-sm btn-primary mb-5">{{ __('pet.create') }}</button></a>
                     <x-auth-validation-errors class="mb-4" :errors="$errors" />
@@ -35,7 +35,7 @@
                                 <tr class="border-b">
                                     <td class="whitespace-nowrap px-6 py-4">{{ $pet->pet_id }}</td>
                                     <td class="whitespace-nowrap px-6 py-4 font-medium">{{ $pet->pet_name }}</td>
-                                    <td class="whitespace-nowrap px-6 py-4">{{ $petTypes[$pet->pet_type] }}</td>
+                                    <td class="whitespace-nowrap px-6 py-4">{{ $pet->pet_type_name }}</td>
                                     <td class="whitespace-nowrap px-6 py-4">{{ formatDate($pet->pet_birthdate) }}</td>
                                     <td
                                         class="whitespace-nowrap px-6 py-4
