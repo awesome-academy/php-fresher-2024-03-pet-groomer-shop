@@ -190,6 +190,7 @@ return [
         'username'                 => 'tên đăng nhập',
         'year'                     => 'năm',
     ],
+    'after_hour' => 'Trường :attribute phải sau :hour tiếng trước trường :other.',
     'custom'               => [
         'attribute-name' => [
             'rule-name' => 'custom-message',

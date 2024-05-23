@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\PetTypeEnum;
 use App\Enums\StatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -61,5 +62,20 @@ class Pet extends Model
     public function getIsActiveNameAttribute()
     {
         return StatusEnum::getTranslated()[$this->is_active];
+    }
+
+    public function getWeightNameAttribute()
+    {
+        return formatNumber($this->pet_weight, 'KG');
+    }
+
+    public function getPetTypeNameAttribute()
+    {
+        return PetTypeEnum::getTranslated()[$this->pet_type];
+    }
+
+    public function checkOwner(): bool
+    {
+        return $this->user_id === auth()->user()->user_id;
     }
 }

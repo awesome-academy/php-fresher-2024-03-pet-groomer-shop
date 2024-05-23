@@ -3,6 +3,7 @@
 return [
     'pet_service'   => 'Pet Service',
     'name' => 'Pet Service Name',
+    'total' => 'Pet Service Total Price',
     'description' => 'Pet Service Description',
     'not_found' => 'Pet Service not found',
     'create' => 'Create Pet Service',

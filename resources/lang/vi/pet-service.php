@@ -3,6 +3,7 @@
 return [
     'pet_service'   => 'Dịch vụ thú cưng',
     'name' => 'Tên dịch vụ',
+    'total' => 'Tổng giá dịch vụ thú cưng',
     'description' => 'Mô tả dịch vụ',
     'not_found' => 'Không tìm thấy dịch vụ',
     'create' => 'Tạo dịch vụ',

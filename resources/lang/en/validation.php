@@ -190,6 +190,7 @@ return [
         'username'                 => 'Username',
         'year'                     => 'Year',
     ],
+    'after_hour' => 'The :attribute must be after :hour hour of :other.',
     'custom'               => [
         'attribute-name' => [
             'rule-name' => 'custom-message',
