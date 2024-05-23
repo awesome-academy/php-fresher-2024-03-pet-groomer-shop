@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Enums\PermissionEnum;
+use App\Enums\RoleEnum;
 use App\Models\Breed;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -42,7 +42,7 @@ class BreedPolicy
      */
     public function create(User $user)
     {
-        return $user->hasPermission(PermissionEnum::CREATE_BREED);
+        return $user->role_id === RoleEnum::ADMIN || $user->role_id === RoleEnum::MANGER;
     }
 
     /**
@@ -54,7 +54,7 @@ class BreedPolicy
      */
     public function update(User $user, Breed $breed)
     {
-        return $user->hasPermission(PermissionEnum::UPDATE_BREED);
+        return $user->role_id === RoleEnum::ADMIN || $user->role_id === RoleEnum::MANGER;
     }
 
     /**
@@ -66,7 +66,7 @@ class BreedPolicy
      */
     public function delete(User $user, Breed $breed)
     {
-        return $user->hasPermission(PermissionEnum::DELETE_BREED);
+        return $user->role_id === RoleEnum::ADMIN || $user->role_id === RoleEnum::MANGER;
     }
 
     /**

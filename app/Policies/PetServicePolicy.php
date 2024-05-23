@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Enums\PermissionEnum;
+use App\Enums\RoleEnum;
 use App\Models\PetService;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -42,7 +42,7 @@ class PetServicePolicy
      */
     public function create(User $user)
     {
-        return $user->hasPermission(PermissionEnum::CREATE_PET_SERVICE);
+        return $user->role_id === RoleEnum::ADMIN || $user->role_id === RoleEnum::MANGER;
     }
 
     /**
@@ -54,7 +54,7 @@ class PetServicePolicy
      */
     public function update(User $user, PetService $petService)
     {
-        return $user->hasPermission(PermissionEnum::UPDATE_PET_SERVICE);
+        return $user->role_id === RoleEnum::ADMIN || $user->role_id === RoleEnum::MANGER;
     }
 
     /**
@@ -66,7 +66,7 @@ class PetServicePolicy
      */
     public function delete(User $user, PetService $petService)
     {
-        return $user->hasPermission(PermissionEnum::DELETE_PET_SERVICE);
+        return $user->role_id === RoleEnum::ADMIN || $user->role_id === RoleEnum::MANGER;
     }
 
     /**

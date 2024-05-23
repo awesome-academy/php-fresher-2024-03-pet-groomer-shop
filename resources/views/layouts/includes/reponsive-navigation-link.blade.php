@@ -19,11 +19,3 @@
   <x-responsive-nav-link :href="route('breed.index')" :active="request()->routeIs('breed.index')">
       {{ __('breed.breed') }}
   </x-responsive-nav-link>
-  @admin
-      <x-responsive-nav-link :href="route('role.index')" :active="request()->routeIs('role.index')">
-          {{ __('Role') }}
-      </x-responsive-nav-link>
-      <x-responsive-nav-link :href="route('permission.index')" :active="request()->routeIs('permission.index')">
-          {{ __('Permission') }}
-      </x-responsive-nav-link>
-  @endadmin

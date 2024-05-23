@@ -10,11 +10,9 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\LanguageController;
-use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PetController;
 use App\Http\Controllers\PetServiceController;
 use App\Http\Controllers\PetServicePriceController;
-use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -124,19 +122,13 @@ Route::middleware(['auth', 'not.customer'])->group(function () {
 
     Route::resource('breed', BreedController::class)->names('breed');
 
-    Route::middleware(['admin'])->group(function () {
-        Route::resource('role', RoleController::class)->names('role');
-        // Permission
-        Route::resource('permission', PermissionController::class)->names('permission');
-        Route::get(
-            'permission/{permission}/attach-role',
-            [PermissionController::class, 'attachRolePage']
-        )->name('permission.attach-role-page');
-        Route::post(
-            'permission/{permission}/attach-role',
-            [PermissionController::class, 'attachRole']
-        )->name('permission.attach-role');
-    });
+    Route::resource('coupon', CouponController::class)->names('coupon');
+
+    Route::resource('pet-service', PetServiceController::class)->names('pet-service');
+
+    Route::resource('pet-service.pet-service-price', PetServicePriceController::class)->names('pet-service-price');
+
+    Route::resource('breed', BreedController::class)->names('breed');
 });
 
 Route::get('language/{lang}', [LanguageController::class, 'setLanguage'])->name('language.set');

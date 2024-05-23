@@ -2,7 +2,6 @@
 
 namespace App\Policies;
 
-use App\Enums\PermissionEnum;
 use App\Enums\RoleEnum;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -42,12 +41,12 @@ class UserPolicy
      */
     public function create(User $user)
     {
-        return $user->hasPermission(PermissionEnum::CREATE_USER);
+        return $user->role_id === RoleEnum::ADMIN || $user->role_id === RoleEnum::MANGER;
     }
 
     public function updateAdmin(User $user, User $model)
     {
-        return $user->hasPermission(PermissionEnum::UPDATE_ADMIN) && $model->admin();
+        return $user->role_id === RoleEnum::ADMIN && $model->admin();
     }
 
     /**
@@ -61,7 +60,7 @@ class UserPolicy
     {
         $this->checkManagerAndAdmin($user, $model);
 
-        return $user->hasPermission(PermissionEnum::UPDATE_USER);
+        return $user->role_id === RoleEnum::ADMIN || $user->role_id === RoleEnum::MANGER;
     }
 
     /**
@@ -84,7 +83,7 @@ class UserPolicy
 
     public function deleteAdmin(User $user, User $model)
     {
-        return $user->hasPermission(PermissionEnum::DELETE_ADMIN) && $model->admin();
+        return $user->role_id === RoleEnum::ADMIN && $model->admin();
     }
 
     /**
