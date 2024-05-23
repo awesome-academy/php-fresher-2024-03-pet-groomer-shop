@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 
 class CareOrderController extends Controller
 {
-    public function index(Request $request)
+    public function index(PetSearchRequest $request)
     {
         $conditions = formatQuery($request->query());
         $pets = Pet::where('user_id', auth()->user()->user_id)

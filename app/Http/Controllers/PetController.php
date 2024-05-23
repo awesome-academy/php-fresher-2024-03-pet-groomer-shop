@@ -3,27 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Enums\PetTypeEnum;
-use App\Enums\StatusEnum;
 use App\Http\Requests\PetRequest;
+use App\Http\Requests\Search\PetSearchRequest;
 use App\Models\Breed;
 use App\Models\Pet;
 use App\Models\Role;
 use App\Models\User;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class PetController extends Controller
 {
-    public function index(Request $request)
+    public function index(PetSearchRequest $request)
     {
         $conditions = formatQuery($request->query());
-        $pets = Pet::with('user')->where($conditions)->paginate(config('constant.data_table.item_per_page'));
+        $pets = Pet::with(['user', 'breed'])->where($conditions)->paginate(config('constant.data_table.item_per_page'));
         $oldInput = $request->all();
         $breeds = Breed::pluck('breed_id', 'breed_name');
-
-        $activeMenu = StatusEnum::getTranslated();
         $petTypes = PetTypeEnum::getTranslated();
         $petTypesSelected = array_flip($petTypes);
         $petTypesSelectedExtra = $petTypesSelected;
@@ -32,7 +29,6 @@ class PetController extends Controller
         return view('pet.index', [
             'pets' => $pets,
             'breeds' => $breeds,
-            'activeMenu' => $activeMenu,
             'petTypes' => $petTypes,
             'petTypesSelected' => $petTypesSelected,
             'petTypesSelectedExtra' => $petTypesSelectedExtra,
@@ -134,6 +130,7 @@ class PetController extends Controller
             $redirectValue = $request->input(
                 'redirect_pet_index'
             );
+
             $data['is_active'] = $request->has('is_active') ? 1 : 0;
 
             $pet->update($data);

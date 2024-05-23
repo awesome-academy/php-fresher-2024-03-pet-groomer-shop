@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\RoleEnum;
-use App\Http\Requests\UserRequest;
+use App\Http\Requests\Search\UserSearchRequest;
 use App\Models\Branch;
 use App\Models\Breed;
 use App\Models\Role;
@@ -11,7 +11,6 @@ use App\Models\User;
 use App\Scopes\ActiveUserScope;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
@@ -19,10 +18,10 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
-    public function index(Request $request): View
+    public function index(UserSearchRequest $request): View
     {
         $conditions = formatQuery($request->query());
-        $users = User::withoutGlobalScope(ActiveUserScope::class)->where($conditions);
+        $users = User::withoutGlobalScope(ActiveUserScope::class)->with('role')->where($conditions);
         $users = $users->where($conditions)
             ->orderBy('created_at', 'desc')
             ->paginate(config('constant.data_table.item_per_page'))->withQueryString();
@@ -31,7 +30,6 @@ class UserController extends Controller
         $roles['all'] = '';
         $roleEnum = array_flip(\App\Enums\RoleEnum::getConstants());
         $oldInput = $request->all();
-        $roles = Role::pluck('role_id', 'role_name');
         $roles[__('All')] = '';
         $roleEnum = array_flip(\App\Enums\RoleEnum::getConstants());
 

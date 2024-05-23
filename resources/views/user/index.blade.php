@@ -39,7 +39,7 @@
                                         class="whitespace-nowrap px-6 py-4
                                         {{ $user->is_active ? ' text-green-500' : ' text-red-500' }}">
                                         {{ $user->is_active_name }}</td>
-                                    <td class="whitespace-nowrap px-6 py-4">{{ $roleEnum[$user->role_id] }}</td>
+                                    <td class="whitespace-nowrap px-6 py-4">{{ $user->role->role_name }}</td>
 
                                     <td class="whitespace-nowrap px-6 py-4">
                                         <a href="{{ route('user.show', ['user' => $user->user_id]) }}">

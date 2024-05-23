@@ -26,7 +26,6 @@ class PaymentRequest extends FormRequest
         return [
             'coupon_code' => 'nullable|size:10|string',
             'payment_method' => 'required|in:cod,banking',
-
         ];
     }
 }

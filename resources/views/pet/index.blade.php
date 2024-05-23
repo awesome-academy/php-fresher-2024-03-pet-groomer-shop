@@ -37,12 +37,12 @@
                                     <td class="whitespace-nowrap px-6 py-4">{{ $pet->pet_id }}</td>
                                     <td class="whitespace-nowrap px-6 py-4 font-medium">{{ $pet->pet_name }}</td>
                                     <td class="whitespace-nowrap px-6 py-4">{{ $petTypes[$pet->pet_type] }}</td>
-                                    <td class="whitespace-nowrap px-6 py-4">{{ $pet->breed_id }}</td>
+                                    <td class="whitespace-nowrap px-6 py-4">{{ $pet->breed->breed_name ?? '' }}</td>
                                     <td class="whitespace-nowrap px-6 py-4">{{ formatDate($pet->pet_birthdate) }}</td>
                                     <td
                                         class="whitespace-nowrap px-6 py-4
                                         {{ $pet->is_active ? ' text-green-500' : ' text-red-500' }}">
-                                        {{ $pet->i }}</td>
+                                        {{ $pet->is_active_name }}</td>
                                     <td class="whitespace-nowrap px-6 py-4">
 
                                         <a class="text-indigo-600"
