@@ -34,4 +34,3 @@
         {{ __('breed.breed') }}
     </x-nav-link>
 </div>
-
