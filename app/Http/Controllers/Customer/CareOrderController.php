@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Customer;
 use App\Enums\PetTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CareOrderRequest;
+use App\Http\Requests\Search\PetSearchRequest;
 use App\Models\Branch;
 use App\Models\Pet;
 use App\Models\PetService;

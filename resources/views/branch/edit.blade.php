@@ -14,34 +14,33 @@
                     <form method="POST"
                         class="w-full flex flex-col
                     md:grid grid-cols-12 gap-2 md:gap-4"
-                        action="{{ route('breed.store') }}">
+                        action="{{ route('branch.update', ['branch' => $branch->branch_id]) }}">
+                        @method('PUT')
                         @csrf
                         <div class="col-span-6">
-                            <x-label for="breed_name" required :value="__('breed.name')" />
+                            <x-label for="branch_name" required :value="__('branch.name')" />
 
-                            <x-input id="breed_name" class="block mt-1 w-full" type="text" name="breed_name"
-                                :value="old('breed_name')" required autofocus />
+                            <x-input id="branch_name" class="block mt-1 w-full" type="text" name="branch_name"
+                                :value="$branch->branch_name" required autofocus />
                         </div>
-
                         <div class="col-span-6">
-                            <x-label for="breed_description" :value="__('breed.description')" />
+                            <x-label for="branch_address" required :value="__('branch.address')" />
 
-                            <x-textarea id="breed_description" class="block mt-1 w-full" name="breed_description"
-                                :value="old('breed_description')" />
+                            <x-input id="branch_address" class="block mt-1 w-full" type="text" name="branch_address"
+                                :value="$branch->branch_address" required autofocus />
                         </div>
-
                         <div class="col-span-6">
-                            <x-label for="breed_type" :value="__('breed.type')" />
+                            <x-label for="branch_phone" required :value="__('branch.phone')" />
 
-                            <x-select id="breed_type" class="block mt-1 w-full" name="breed_type" :options="$petTypeOptions" />
+                            <x-input id="branch_phone" class="block mt-1 w-full" type="text" name="branch_phone"
+                                :value="$branch->branch_phone" required autofocus />
                         </div>
-
 
 
 
                         <div class="col-span-12 flex items-center justify-end mt-4">
                             <x-button class="ml-4">
-                                {{ __('Create') }}
+                                {{ __('Update') }}
                             </x-button>
                         </div>
                     </form>

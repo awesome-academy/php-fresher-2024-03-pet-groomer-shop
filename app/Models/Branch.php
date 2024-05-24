@@ -15,6 +15,7 @@ class Branch extends Model
 
     protected $primaryKey = 'branch_id';
     protected $table = 'branches';
+    protected $guarded = [];
 
     public function users(): HasMany
     {

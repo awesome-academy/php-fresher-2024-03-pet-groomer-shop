@@ -23,6 +23,7 @@ mix.js(
         "resources/js/breed.js",
         "resources/js/care-order.js",
         "resources/js/payment.js",
+        "resources/js/branch.js",
     ],
     "public/js/app.js"
 )

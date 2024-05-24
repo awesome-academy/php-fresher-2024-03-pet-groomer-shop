@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BranchController;
 use App\Http\Controllers\BreedController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\Customer\CareOrderController;
@@ -54,6 +55,8 @@ Route::middleware(['auth', 'not.customer'])->group(function () {
         ->name('dashboard');
 
     Route::resource('user', UserController::class)->names('user');
+
+    Route::resource('branch', BranchController::class)->names('branch');
 
     Route::get('/pet', [PetController::class, 'index'])->name('pet.index');
 

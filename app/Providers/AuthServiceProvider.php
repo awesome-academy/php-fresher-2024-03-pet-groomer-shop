@@ -2,12 +2,14 @@
 
 namespace App\Providers;
 
+use App\Models\Branch;
 use App\Models\Breed;
 use App\Models\Coupon;
 use App\Models\Pet;
 use App\Models\PetService;
 use App\Models\PetServicePrice;
 use App\Models\User;
+use App\Policies\BranchPolicy;
 use App\Policies\BreedPolicy;
 use App\Policies\CouponPolicy;
 use App\Policies\PetPolicy;
@@ -30,6 +32,7 @@ class AuthServiceProvider extends ServiceProvider
         PetService::class => PetServicePolicy::class,
         PetServicePrice::class => PetServicePricePolicy::class,
         Breed::class => BreedPolicy::class,
+        Branch::class => BranchPolicy::class,
     ];
 
     /**
