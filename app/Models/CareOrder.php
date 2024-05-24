@@ -96,4 +96,19 @@ class CareOrder extends Model
     {
         return $this->user_id === getUser()->user_id;
     }
+
+    public function isCancelable()
+    {
+        return $this->order_status <= OrderStatusEnum::CONFIRMED;
+    }
+
+    public function isAssignable()
+    {
+        return $this->order_status === OrderStatusEnum::CONFIRMED;
+    }
+
+    public static function getStatusOptions()
+    {
+        return array_flip(OrderStatusEnum::getTranslated());
+    }
 }

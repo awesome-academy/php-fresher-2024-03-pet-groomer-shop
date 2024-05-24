@@ -16,4 +16,5 @@ return [
     'in_progress' => 'Đang xử lý',
     'waiting' => 'Chờ nhận',
     'completed' => 'Hoàn thành',
+    'cancelled' => 'Hủy đơn',
 ];

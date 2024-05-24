@@ -7,6 +7,9 @@
   <x-responsive-nav-link :href="route('pet.index')" :active="request()->routeIs('pet.index')">
       {{ __('Pet') }}
   </x-responsive-nav-link>
+  <x-responsive-nav-link :href="route('care-order-manage.index')" :active="request()->routeIs('care-order-manage.index')">
+      {{ __('care-order.care-order') }}
+  </x-responsive-nav-link>
   <x-responsive-nav-link :href="route('employee.index')" :active="request()->routeIs('employee.index')">
       {{ __('employee.employee') }}
   </x-responsive-nav-link>

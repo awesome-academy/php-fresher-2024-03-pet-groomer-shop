@@ -57,7 +57,6 @@
                             @endforelse
 
                         </tbody>
-
                     </table>
 
 

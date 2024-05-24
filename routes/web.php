@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\BreedController;
+use App\Http\Controllers\CareOrderController as CareOrderManagementController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\Customer\CareOrderController;
+use App\Http\Controllers\Customer\CareOrderHistoryController;
 use App\Http\Controllers\Customer\CustomerPetController;
 use App\Http\Controllers\Customer\CustomerProfileController;
 use App\Http\Controllers\Customer\PaymentController;
@@ -11,8 +13,10 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\PetController;
 use App\Http\Controllers\PetServiceController;
 use App\Http\Controllers\PetServicePriceController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -93,6 +97,8 @@ Route::middleware(['auth', 'not.customer'])->group(function () {
     Route::resource('pet-service.pet-service-price', PetServicePriceController::class)->names('pet-service-price');
 
     Route::resource('breed', BreedController::class)->names('breed');
+
+    Route::resource('care-order-manage', CareOrderManagementController::class)->names('care-order-manage');
 });
 
 Route::get('language/{lang}', [LanguageController::class, 'setLanguage'])->name('language.set');

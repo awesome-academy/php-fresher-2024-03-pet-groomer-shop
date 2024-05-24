@@ -20,6 +20,11 @@
     </x-nav-link>
 </div>
 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+    <x-nav-link :href="route('care-order-manage.index')" :active="request()->routeIs('care-order-manage.index')">
+        {{ __('care-order.care-order') }}
+    </x-nav-link>
+</div>
+<div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
     <x-nav-link :href="route('employee.index')" :active="request()->routeIs('employee.index')">
         {{ __('employee.employee') }}
     </x-nav-link>

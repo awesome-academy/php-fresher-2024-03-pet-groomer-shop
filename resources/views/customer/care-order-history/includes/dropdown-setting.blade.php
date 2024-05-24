@@ -12,7 +12,7 @@
                  </button>
              </a>
 
-             @if ($careOrder->checkCancelable())
+             @if ($careOrder->isCancelable())
                  <button data-id="{{ $careOrder->order_id }}" class="btn btn-sm btn-danger care-order-cancel w-full">
                      {{ __('care-order.cancel') }}
                  </button>

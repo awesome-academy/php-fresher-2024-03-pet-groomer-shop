@@ -62,7 +62,7 @@ class CareOrderController extends Controller
     public function request(CareOrderRequest $request, $petID)
     {
         try {
-            if (!$this->checkValidService($request)) {
+            if (!$this->checkValidService($request, $petID)) {
                 throw new \Exception(trans('Invalid service'));
             }
 
@@ -150,26 +150,23 @@ class CareOrderController extends Controller
         return [$petTypesSelected, $petTypesSelectedExtra];
     }
 
-    private function checkDatePair($request)
+    private function checkDatePair($request, $petID)
     {
-        $fromDatetime = $request->from_datetime;
-        $toDatetime = $request->to_datetime;
-        $conditionOne = isset($fromDatetime) && !isset($toDatetime);
-        $conditionTwo = !isset($fromDatetime) && isset($toDatetime);
+        $fromDateTime = $request->from_datetime;
+        $toDateTime = $request->to_datetime;
+        $conditionOne = isset($fromDateTime) && !isset($toDateTime);
+        $conditionTwo = !isset($fromDateTime) && isset($toDateTime);
 
         return $conditionOne || $conditionTwo;
     }
 
-    private function checkValidService($request)
+    private function checkValidService($request, $petID)
     {
         $emptyPetService = !isset($request->pet_service_id);
-        $emptyFromDatetime = !isset($request->from_datetime);
-        $emptyToDatetime = !isset($request->to_datetime);
-
-        if ($emptyPetService && $emptyFromDatetime && $emptyToDatetime) {
+        if ($emptyPetService && !isset($request->from_datetime) && !isset($request->to_datetime)) {
             return false;
         }
 
-        return !$emptyPetService || !$this->checkDatePair($request);
+        return !$emptyPetService || !$this->checkDatePair($request, $petID);
     }
 }
