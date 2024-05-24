@@ -34,4 +34,17 @@ return [
         'Less than 50kg' => 50,
         'Less than 100kg' => 100,
     ],
+    'max_number' => 10000000000,
+    'pet_price_weight' => [
+        'Less than 5kg' => 5,
+        'Less than 10kg' => 10,
+        'Less than 50kg' => 50,
+        'Less than 100kg' => 100,
+    ],
+    'hotel_hour_prices' => [
+        'one' => 50000,
+        'two' => 80000,
+        'fifty' => 28000,
+        'other' => 18000,
+    ],
 ];
