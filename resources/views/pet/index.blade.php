@@ -11,8 +11,7 @@
                 <div class="p-6  border-b ">
                     <a href="{{ route('pet.create') }}">
                         <button class="btn btn-sm btn-primary mb-5">{{ __('pet.create') }}</button></a>
-                    <x-auth-validation-errors class="mb-4" :errors="$errors" />
-                    <x-alert-session />
+                    <x-display-infor />
                     @include('pet.includes.search')
                     <table class="min-w-full  text-left text-sm font-light text-surface m-4">
                         <thead class="border-b  font-medium ">
