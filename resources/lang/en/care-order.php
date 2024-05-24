@@ -18,4 +18,9 @@ return [
     'update_fail' => 'Update Care Order failed',
     'delete_fail' => 'Delete Care Order failed',
     'request_for' => 'Request For',
+    'history' => 'Care Order History',
+    'number' => 'Care Order Number',
+    'cancel' => 'Cancel Order',
+    'not_found' => 'Care Order not found',
+    'detail_for' => 'Care order detail for',
 ];

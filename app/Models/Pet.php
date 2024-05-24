@@ -78,4 +78,16 @@ class Pet extends Model
     {
         return $this->user_id === auth()->user()->user_id;
     }
+
+    public static function getPetOptions($isOwner)
+    {
+        $petOptions = self::pluck('pet_id', 'pet_name');
+        if ($isOwner) {
+            $petOptions = self::where('user_id', getUser()->user_id)->pluck('pet_id', 'pet_name');
+        }
+
+        $petOptions[__('All')] = '';
+
+        return $petOptions;
+    }
 }
