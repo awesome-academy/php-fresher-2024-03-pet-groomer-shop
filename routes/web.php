@@ -11,10 +11,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\LanguageController;
-use App\Http\Controllers\PetController;
 use App\Http\Controllers\PetServiceController;
 use App\Http\Controllers\PetServicePriceController;
-use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -47,6 +45,7 @@ Route::prefix('/customer')->group(function () {
         Route::get('/payment/confirm', [PaymentController::class, 'confirmPage'])->name('payment.confirm');
 
         Route::resource('customer.pet', CustomerPetController::class)->names('customer-pet');
+        Route::resource('care-order-history', CareOrderHistoryController::class)->names('care-order-history');
     });
 });
 

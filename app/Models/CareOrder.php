@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class CareOrder extends Model
@@ -47,7 +48,7 @@ class CareOrder extends Model
         )->withPivot(['from_time', 'to_time']);
     }
 
-    public function hotelServices(): HasOne
+    public function hotelService(): HasOne
     {
         return $this->hasOne(HotelService::class, 'order_id', 'order_id');
     }
@@ -62,10 +63,37 @@ class CareOrder extends Model
         )->withPivot(['pet_service_price']);
     }
 
+    public function petServices(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            PetService::class,
+            CareOrderDetail::class,
+            'order_id',
+            'pet_service_id',
+            'order_id',
+            'pet_service_id'
+        );
+    }
+
     public function getOrderStatusNameAttribute()
     {
         $orderStatusNames = OrderStatusEnum::getTranslated();
 
         return $orderStatusNames[$this->order_status];
+    }
+
+    public function checkCancelable()
+    {
+        return $this->order_status <= OrderStatusEnum::CONFIRMED;
+    }
+
+    public function getTotalPriceFormatAttribute()
+    {
+        return formatNumber($this->order_total_price, 'VND');
+    }
+
+    public function checkOwner()
+    {
+        return $this->user_id === getUser()->user_id;
     }
 }

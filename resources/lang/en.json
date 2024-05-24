@@ -136,5 +136,6 @@
     "Profile": "Profile",
     "My Pet": "My Pet",
     "You're not logged in!": "You're not logged in!",
-    "Invalid service": "Invalid service. You must choose one of these services or hotel service with full from date and to date or both"
+    "Invalid service": "Invalid service. You must choose one of these services or hotel service with full from date and to date or both",
+    "Detail": "Detail"
 }

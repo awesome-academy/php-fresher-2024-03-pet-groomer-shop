@@ -9,6 +9,7 @@ class OrderStatusEnum extends Enum
     public const IN_PROGRESS = 2;
     public const WAITING = 3;
     public const COMPLETED = 4;
+    public const CANCELLED = 5;
 
     public static function getTranslated(): array
     {

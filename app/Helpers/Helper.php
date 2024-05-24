@@ -1,6 +1,8 @@
 <?php
 
+use App\Enums\OrderStatusEnum;
 use App\Enums\RoleEnum;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
 if (!function_exists('formatDate')) {
@@ -67,6 +69,32 @@ if (!function_exists('formatQuery')) {
     }
 }
 
+if (!function_exists('searchDate')) {
+    function searchDate(Builder $query, string $key, ?string $value, ?string $logical = '=')
+    {
+        if ($value) {
+            $query = $query->whereDate($key, $logical, $value);
+        }
+
+        return $query;
+    }
+}
+
+if (!function_exists('searchBetween')) {
+    function searchBetween(Builder $query, string $key, ?string $fromInput, ?string $toInput)
+    {
+        if ($fromInput && $toInput) {
+            $query = $query->whereBetween($key, [$fromInput, $toInput]);
+        } elseif ($fromInput) {
+            $query = $query->where($key, '>', $fromInput);
+        } elseif ($toInput) {
+            $query = $query->where($key, '<', $toInput);
+        }
+
+        return $query;
+    }
+}
+
 if (!function_exists('formatSelectWeightPrice')) {
     function formatSelectWeightPrice()
     {
@@ -111,5 +139,27 @@ if (!function_exists('flatten')) {
         });
 
         return $return;
+    }
+}
+
+if (!function_exists('orderStatusColor')) {
+    function orderStatusColor($statusID)
+    {
+        switch ($statusID) {
+            case OrderStatusEnum::CREATED:
+                return 'text-cyan-500';
+            case OrderStatusEnum::CONFIRMED:
+                return 'text-indigo-500';
+            case OrderStatusEnum::IN_PROGRESS:
+                return 'text-violet-500';
+            case OrderStatusEnum::WAITING:
+                return 'text-sky-500';
+            case OrderStatusEnum::COMPLETED:
+                return 'text-green-500';
+            case OrderStatusEnum::CANCELLED:
+                return 'text-red-500';
+            default:
+                return 'text-gray-900';
+        }
     }
 }

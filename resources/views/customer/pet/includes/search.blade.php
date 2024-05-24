@@ -1,5 +1,6 @@
 <div>
-    <form class=" flex flex-wrap md:grid grid-cols-12 gap-4 my-4 mb-10" action="{{ route('customer-pet.index', ['customer' => Auth::user()->user_id]) }}" method="GET">
+    <form class=" flex flex-wrap md:grid grid-cols-12 gap-4 my-4 mb-10"
+        action="{{ route('customer-pet.index', ['customer' => Auth::user()->user_id]) }}" method="GET">
         <h2 class="col-span-12 font-bold text-xl">
             {{ __('Search') }}
         </h2>

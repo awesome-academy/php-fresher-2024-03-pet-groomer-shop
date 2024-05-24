@@ -25,6 +25,7 @@ return [
     ],
     'data_table' => [
         'item_per_page' => 15,
+        'order_history_page' => 10,
     ],
     'max_number' => 10000000000,
     'pet_price_weight' => [

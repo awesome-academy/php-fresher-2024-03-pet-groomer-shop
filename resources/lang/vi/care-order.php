@@ -18,4 +18,9 @@ return [
     'update_fail' => 'Cập nhật đơn chăm thú thất bại',
     'delete_fail' => 'Xóa đơn chăm thú thất bại',
     'request_for' => 'Yêu cầu cho',
+    'history' => 'Lịch sử chăm thú',
+    'number' => 'Mã số đơn',
+    'cancel' => 'Hủy đơn',
+    'not_found' => 'Không tìm thấy đơn nào',
+    'detail_for' => 'Chi tiết đơn cho',
 ];
