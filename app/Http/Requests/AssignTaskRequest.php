@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
 class AssignTaskRequest extends FormRequest
@@ -23,9 +24,11 @@ class AssignTaskRequest extends FormRequest
      */
     public function rules()
     {
+        $returnedDate = request()->input('returned_date') ?? Carbon::now()->addYear();
+
         return [
-            'from_time' => 'required|before:to_time',
-            'to_time' => 'required|after:from_time',
+            'from_time' => 'required|before:to_time|after:order_received_date',
+            'to_time' => 'required|after:from_time|before_or_equal:' . $returnedDate,
         ];
     }
 }

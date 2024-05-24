@@ -110,6 +110,16 @@ class UserPolicy
         //
     }
 
+    public function assignTask(User $user, User $model)
+    {
+        return $user->role_id === RoleEnum::ADMIN || $user->role_id === RoleEnum::MANGER;
+    }
+
+    public function unassignTask(User $user, User $model)
+    {
+        return $user->role_id === RoleEnum::ADMIN || $user->role_id === RoleEnum::MANGER;
+    }
+
     private function checkManagerAndAdmin(User $user, User $model)
     {
         if ($user->role_id === RoleEnum::MANGER && $model->role_id === RoleEnum::ADMIN) {

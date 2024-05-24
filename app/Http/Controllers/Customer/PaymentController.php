@@ -88,26 +88,13 @@ class PaymentController extends Controller
                 throw new \Exception(trans('pet.not_found'));
             }
 
-            $careOrder = session('careOrder');
             $petServices = session('petServicePrice') ?? [];
+            $coupon = null;
             if (isset($request->coupon_code)) {
                 $coupon = Coupon::where('coupon_code', $request->coupon_code)->first();
             }
 
-            $order = CareOrder::create([
-                'pet_id' => $pet->pet_id,
-                'branch_id' => $careOrder['branch_id'],
-                'user_id' => getUser()->user_id,
-                'order_status' => OrderStatusEnum::CREATED,
-                'order_note' => $careOrder['order_note'],
-                'order_total_price' => $request->input('total_price', 0),
-                'order_coupon_price' => $request->input('coupon_price', 0),
-                'coupon_id' => isset($request->coupon_code) ? $coupon->coupon_id : null,
-                'payment_method' => $request->input('payment_method', PaymentMethodEnum::COD),
-                'order_hotel_price' => $this->getHotelPrice()[0],
-                'order_received_date' => Carbon::now(),
-            ]);
-
+            $order = $this->createOrder($request, $pet, $coupon);
             $this->attachPetService($order, $petServices);
             $this->setHotelService($order);
 
@@ -207,7 +194,8 @@ class PaymentController extends Controller
         } elseif ($hours <= 50) {
             $hotelPrice = $hotelHourPrice['fifty'] * $hours;
         } else {
-            $hotelPrice = $hotelHourPrice['other'] * $hours;
+            $remainHour = $hours - 50;
+            $hotelPrice = $hotelHourPrice['fifty'] * 50 + $hotelHourPrice['other'] * $remainHour;
         }
 
         session()->put('hotelPrice', $hotelPrice);
@@ -246,5 +234,31 @@ class PaymentController extends Controller
                 'order_id' => $order->order_id,
             ]);
         }
+    }
+
+    private function createOrder($request, $pet, $coupon)
+    {
+        $careOrder = session('careOrder');
+
+        $data = [
+            'pet_id' => $pet->pet_id,
+            'branch_id' => $careOrder['branch_id'],
+            'user_id' => getUser()->user_id,
+            'order_status' => OrderStatusEnum::CREATED,
+            'order_note' => $careOrder['order_note'],
+            'order_total_price' => $request->input('total_price', 0),
+            'order_coupon_price' => $request->input('coupon_price', 0),
+            'coupon_id' => isset($request->coupon_code) ? $coupon->coupon_id : null,
+            'payment_method' => $request->input('payment_method', PaymentMethodEnum::COD),
+            'order_hotel_price' => $this->getHotelPrice()[0],
+            'order_received_date' => Carbon::now(),
+        ];
+
+        if (isset($careOrder['from_datetime']) && isset($careOrder['to_datetime'])) {
+            $data['order_received_date'] = $careOrder['from_datetime'];
+            $data['returned_date'] = $careOrder['to_datetime'];
+        }
+
+        return CareOrder::create($data);
     }
 }

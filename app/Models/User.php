@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class User extends Authenticatable
@@ -165,5 +166,23 @@ class User extends Authenticatable
         $activeName = StatusEnum::getTranslated();
 
         return $activeName[$this->is_active];
+    }
+
+    public function isAssigned($orderID)
+    {
+        return DB::table('users')
+            ->join('assign_task', 'users.user_id', '=', 'assign_task.user_id')
+            ->where('assign_task.order_id', $orderID)
+            ->select('assign_task.*')
+            ->exists();
+    }
+
+    public function isOverlappingTask($fromTime, $toTime)
+    {
+        return $this
+            ->assignTask()
+            ->wherePivot('from_time', '<', $toTime)
+            ->wherePivot('to_time', '>', $fromTime)
+            ->exists();
     }
 }

@@ -46,6 +46,9 @@
                             <div class="my-3">
                                 {{ trans('care-order.total_price') }}: {{ $careOrder->total_price_format }}
                             </div>
+                            <div class="my-3">
+                                {{ trans('branch.branch') }}: {{ $careOrder->branch->branch_name }}
+                            </div>
 
                         </div>
                     @empty

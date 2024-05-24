@@ -15,8 +15,7 @@
                         action="{{ route('user.store') }}">
                         @csrf
                         <div class="col-span-12">
-
-                            <x-auth-validation-errors class="mb-4" :errors="$errors" />
+                            <x-display-infor />
                         </div>
 
                         <!-- First Name -->

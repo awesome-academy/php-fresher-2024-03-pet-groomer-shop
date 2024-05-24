@@ -82,11 +82,6 @@ class CareOrder extends Model
         return $orderStatusNames[$this->order_status];
     }
 
-    public function checkCancelable()
-    {
-        return $this->order_status <= OrderStatusEnum::CONFIRMED;
-    }
-
     public function getTotalPriceFormatAttribute()
     {
         return formatNumber($this->order_total_price, 'VND');

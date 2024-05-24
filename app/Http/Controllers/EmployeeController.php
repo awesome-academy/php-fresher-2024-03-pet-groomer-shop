@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrderStatusEnum;
 use App\Enums\RoleEnum;
 use App\Http\Requests\AssignTaskRequest;
 use App\Models\Branch;
 use App\Models\CareOrder;
 use App\Models\User;
 use Exception;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class EmployeeController extends Controller
 {
@@ -43,6 +45,7 @@ class EmployeeController extends Controller
         }
 
         $orders = CareOrder::where('branch_id', $branchID)
+            ->with('assignTask')
             ->orderBy('updated_at', 'desc')
             ->paginate(config('constant.data_table.item_per_page'))->withQueryString();
 
@@ -56,6 +59,7 @@ class EmployeeController extends Controller
 
     public function assignTask(AssignTaskRequest $request, $userID, $orderID)
     {
+        DB::beginTransaction();
         try {
             $user = User::findOrFail($userID);
             $user->assignTask()
@@ -68,7 +72,28 @@ class EmployeeController extends Controller
                 );
 
             return redirect()->back()->with('success', trans('employee.success'));
-        } catch (ModelNotFoundException $e) {
+        } catch (Exception $e) {
+            DB::rollback();
+
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function unassignTask($userID, $orderID)
+    {
+        try {
+            $user = User::findOrFail($userID);
+            if (Gate::denies('unassignTask', $user)) {
+                throw new Exception(trans('permission.delete_fail'));
+            }
+
+            $user->assignTask()->detach($orderID);
+            $order = CareOrder::findOrFail($orderID);
+            $order->order_status = OrderStatusEnum::CONFIRMED;
+            $order->update();
+
+            return redirect()->back()->with('success', trans('employee.unassign_success'));
+        } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
     }

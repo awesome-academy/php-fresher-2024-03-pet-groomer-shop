@@ -19,9 +19,11 @@ class CareOrderHistoryController extends Controller
         $conditions = formatQuery($request->query());
         $careOrders = CareOrder::where('user_id', getUser()->user_id)
             ->where($conditions)
-            ->with(['careOrderDetail', 'hotelService', 'pet']);
+            ->with(['careOrderDetail', 'hotelService', 'pet', 'branch']);
         $careOrders = searchDate($careOrders, 'order_received_date', $request->query('order_received_date'));
-        $careOrders = $careOrders->paginate(config('constant.data_table.order_history_page'));
+        $careOrders = $careOrders
+            ->orderBy('created_at', 'desc')
+            ->paginate(config('constant.data_table.order_history_page'));
         $petOptions = Pet::getPetOptions(true);
         $oldInput = $request->all();
 
