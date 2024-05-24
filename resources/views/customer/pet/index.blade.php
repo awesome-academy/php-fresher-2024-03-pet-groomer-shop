@@ -35,7 +35,7 @@
                                 <tr class="border-b">
                                     <td class="whitespace-nowrap px-6 py-4">{{ $pet->pet_id }}</td>
                                     <td class="whitespace-nowrap px-6 py-4 font-medium">{{ $pet->pet_name }}</td>
-                                    <td class="whitespace-nowrap px-6 py-4">{{ $petTypes[$pet->pet_type] }}</td>
+                                    <td class="whitespace-nowrap px-6 py-4">{{ $pet->pet_type_name }}</td>
                                     <td class="whitespace-nowrap px-6 py-4">{{ formatDate($pet->pet_birthdate) }}</td>
                                         {{ $pet->is_active_name }}</td>
                                     <td class="whitespace-nowrap px-6 py-4">

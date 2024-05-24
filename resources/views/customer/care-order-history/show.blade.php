@@ -22,6 +22,10 @@
                         <div class="my-3 font-medium text-gray-900">
                             🎂{{ trans('Pet Birthdate') }} : {{ formatDate($careOrder->pet->pet_birthdate) }}
                         </div>
+
+                        <div class="my-3 font-medium text-gray-900">
+                            🎂{{ trans('branch.branch') }} : {{ $careOrder->branch->branch_name }}
+                        </div>
                     </div>
 
                     <hr>

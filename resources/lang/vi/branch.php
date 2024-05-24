@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'breed'   => 'Chi nhánh',
+    'branch'   => 'Chi nhánh',
     'name' => 'Tên chi nhánh',
     'address' => 'Địa chỉ chi nhánh',
     'phone' => 'Điện thoại chi nhánh',

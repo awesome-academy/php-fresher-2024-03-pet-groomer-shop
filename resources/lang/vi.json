@@ -134,5 +134,10 @@
     "Management Page": "Trang Quản Lý",
     "Home": "Trang chủ",
     "Profile": "Hồ sơ",
-    "My Pet": "Thú cưng của tôi"
+    "My Pet": "Thú cưng của tôi",
+    "You're not logged in!": "Bạn chưa đăng nhập!",
+    "Invalid service": "Chọn dịch vụ không hợp lệ. Bạn hãy chọn ít nhất 1 dịch vụ hoặc ngày gửi và ngày trả của dịch vụ khách sạn, hoặc cả hai",
+    "Detail": "Chi tiết",
+    "No Action": "Không có thao tác",
+    "Assigned To Other": "Đã giao cho người khác"
 }
