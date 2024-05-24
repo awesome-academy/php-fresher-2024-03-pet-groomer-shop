@@ -1,11 +1,25 @@
 <x-modal :title="__('Show Pet')" :btnText="__('Show Pet')" btnClass="btn-sm btn-success">
     <form method="POST" class="w-full flex flex-col md:grid grid-cols-12 ga-2 md:gap-4"
-        action="{{ route('pet.update', ['id' => $pet->pet_id, 'user' => $pet->user_id]) }}">
+        action="{{ route('pet.update', ['id' => $pet->pet_id, 'user' => $pet->user_id]) }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
-        <x-input id="redirect_pet_index" class="block mt-1 w-full" type="hidden" name="redirect_pet_index" :value="$redirect_pet_index ?? 0" required
-            autofocus />
+        <x-input id="redirect_pet_index" class="block mt-1 w-full" type="hidden" name="redirect_pet_index"
+            :value="$redirect_pet_index ?? 0" required autofocus />
+
+        <div class="col-span-12">
+
+            @if ($pet->image->image_path ?? false)
+                <img class="w-24 h-24 my-4 rounded-md shadow-sm" src="{{ asset('storage/' . $pet->image->image_path) }}"
+                    alt="user_avatar">
+            @else
+                <img class="w-24 h-24 my-4 rounded-md shadow-sm" src="{{ asset('img/default-image.png') }}"
+                    alt="pet_avatar">
+            @endif
+            <x-label for="pet_avatar" :value="__('Avatar')" />
+
+            <input type="file" name="pet_avatar" id="pet_avatar">
+        </div>
 
         <div class="col-span-6">
             <x-label required for="pet_name" :value="__('Pet Name')" />

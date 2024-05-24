@@ -139,5 +139,6 @@
     "Invalid service": "Invalid service. You must choose one of these services or hotel service with full from date and to date or both",
     "Detail": "Detail",
     "No Action": "No Action",
-    "Assigned To Other": "Assigned To Other"
+    "Assigned To Other": "Assigned To Other",
+    "Avatar": "Avatar"
 }

@@ -13,10 +13,22 @@
                     </div>
                     <x-auth-validation-errors class="mb-4" :errors="$errors" />
                     <form method="POST" class="w-full grid grid-cols-12 gap-4"
-                        action="{{ route('user.update', ['user' => $user->user_id]) }}">
+                        action="{{ route('user.update', ['user' => $user->user_id]) }}" enctype="multipart/form-data">
                         @method('PUT')
                         @csrf
+                        <div class="col-span-12">
 
+                            @if ($user->image->image_path ?? false)
+                                <img class="w-36 h-36 my-4 rounded-md shadow-sm"
+                                    src="{{ asset('storage/' . $user->image->image_path) }}" alt="user_avatar">
+                            @else
+                                <img class="w-36 h-36 my-4 rounded-md shadow-sm"
+                                    src="{{ asset('img/default-image.png') }}" alt="user_avatar">
+                            @endif
+                            <x-label for="user_avatar" :value="__('Avatar')" />
+
+                            <input type="file" name="user_avatar" id="user_avatar">
+                        </div>
                         <!-- First Name -->
                         <div class="col-span-6">
                             <x-label for="first_name" required :value="__('First Name')" />

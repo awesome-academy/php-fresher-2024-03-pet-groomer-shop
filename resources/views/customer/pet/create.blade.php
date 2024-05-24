@@ -9,11 +9,16 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
-                    <x-alert-session />
-                    <x-auth-validation-errors class="mb-4" :errors="$errors" />
-                    <form method="POST" class="w-full flex flex-col md:grid grid-cols-12 ga-2 md:gap-4"
+                    <x-display-infor />
+                    <form enctype="multipart/form-data" method="POST"
+                        class="w-full flex flex-col md:grid grid-cols-12 ga-2 md:gap-4"
                         action="{{ route('customer-pet.store', ['customer' => Auth::user()->user_id]) }}">
                         @csrf
+
+                        <div class="col-span-12">
+                            <x-label for="pet_name" :value="__('pet.avatar')" />
+                            <input type="file" name="pet_avatar" id="pet_avatar">
+                        </div>
 
                         <div class="col-span-6">
                             <x-label required for="pet_name" :value="__('Pet Name')" />

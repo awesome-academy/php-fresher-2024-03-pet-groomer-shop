@@ -24,7 +24,7 @@
                         </div>
 
                         <div class="my-3 font-medium text-gray-900">
-                            🎂{{ trans('branch.branch') }} : {{ $careOrder->branch->branch_name }}
+                            🏦{{ trans('branch.branch') }} : {{ $careOrder->branch->branch_name }}
                         </div>
                     </div>
 

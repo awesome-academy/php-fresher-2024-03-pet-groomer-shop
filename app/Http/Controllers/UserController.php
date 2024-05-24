@@ -85,6 +85,7 @@ class UserController extends Controller
             }
 
             $user->save();
+            uploadImg($request, 'user_avatar', $user);
 
             return redirect()->route('user.index')->with('success', __('User created successfully'));
         } catch (Exception $e) {
