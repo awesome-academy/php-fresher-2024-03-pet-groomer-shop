@@ -2,8 +2,10 @@
 
 use App\Enums\OrderStatusEnum;
 use App\Enums\RoleEnum;
+use App\Models\Image;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 if (!function_exists('formatDate')) {
     function formatDate($date, string $format = 'd/m/Y')
@@ -160,6 +162,38 @@ if (!function_exists('orderStatusColor')) {
                 return 'text-red-500';
             default:
                 return 'text-gray-900';
+        }
+    }
+}
+
+if (!function_exists('uploadImg')) {
+    function uploadImg($request, $imageField, $imageable)
+    {
+        try {
+            $request->validate([
+                $imageField => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
+
+            $imageFile = $request->file($imageField);
+
+            $currentImage = $imageable->image ?? null;
+
+            // If the user has a current image, delete it
+            if ($currentImage) {
+                Storage::delete('images/' . $currentImage->image_path);
+                $currentImage->delete();
+            }
+
+            // Store the file locally
+            $path = $imageFile->store('images');
+            $newImage = new Image();
+            $newImage->image_path = $path;
+
+            $imageable->image()->save($newImage);
+
+            flashMessage('success', trans('image.create_success'));
+        } catch (Exception $e) {
+            flashMessage('error', $e->getMessage());
         }
     }
 }

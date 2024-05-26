@@ -11,4 +11,5 @@ return [
     'create_fail' => 'Create pet failed',
     'update_fail' => 'Update pet failed',
     'delete_fail' => 'Delete pet failed',
+    'avatar' => 'Pet avatar',
 ];

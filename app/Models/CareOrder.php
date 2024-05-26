@@ -60,7 +60,7 @@ class CareOrder extends Model
             'care_order_detail',
             'order_id',
             'pet_service_id'
-        )->withPivot(['pet_service_price']);
+        )->withPivot(['pet_service_price'])->withTimestamps();
     }
 
     public function petServices(): HasManyThrough
@@ -82,6 +82,11 @@ class CareOrder extends Model
         return $orderStatusNames[$this->order_status];
     }
 
+    public function isCancelable()
+    {
+        return $this->order_status <= OrderStatusEnum::CONFIRMED;
+    }
+
     public function getTotalPriceFormatAttribute()
     {
         return formatNumber($this->order_total_price, 'VND');
@@ -90,16 +95,6 @@ class CareOrder extends Model
     public function checkOwner()
     {
         return $this->user_id === getUser()->user_id;
-    }
-
-    public function isCancelable()
-    {
-        return $this->order_status <= OrderStatusEnum::CONFIRMED;
-    }
-
-    public function isAssignable()
-    {
-        return $this->order_status === OrderStatusEnum::CONFIRMED;
     }
 
     public static function getStatusOptions()

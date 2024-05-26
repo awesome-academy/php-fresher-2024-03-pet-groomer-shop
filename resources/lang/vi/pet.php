@@ -13,4 +13,5 @@ return [
     'create_fail' => 'Không có quyền để tạo',
     'update_fail' => 'Không có quyền để cập nhật',
     'delete_fail' => 'Không có quyền để xóa',
+    'avatar' => 'Ảnh thú cưng',
 ];

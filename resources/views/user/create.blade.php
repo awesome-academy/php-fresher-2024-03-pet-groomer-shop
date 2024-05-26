@@ -12,12 +12,16 @@
                     <form method="POST"
                         class="w-full flex flex-col
                     md:grid grid-cols-12 gap-2 md:gap-4"
-                        action="{{ route('user.store') }}">
+                        action="{{ route('user.store') }}" enctype="multipart/form-data">
                         @csrf
                         <div class="col-span-12">
                             <x-display-infor />
                         </div>
 
+                        <div class="col-span-12">
+                            <x-label for="user_name" :value="__('Avatar')" />
+                            <input type="file" name="user_avatar" id="user_avatar">
+                        </div>
                         <!-- First Name -->
                         <div class="col-span-6">
                             <x-label for="first_name" required :value="__('First Name')" />

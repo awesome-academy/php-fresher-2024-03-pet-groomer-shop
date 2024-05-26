@@ -77,6 +77,7 @@ class CustomerPetController extends Controller
             $pet->user_id = $customerID;
             $pet->is_active = $request->has('is_active') ? 1 : 0;
             $pet->save();
+            uploadImg($request, 'pet_avatar', $pet);
 
             return redirect()
                 ->route(
@@ -127,6 +128,7 @@ class CustomerPetController extends Controller
             $pet->fill($request->all());
             $pet->is_active = $request->has('is_active') ? 1 : 0;
             $pet->update();
+            uploadImg($request, 'pet_avatar', $pet);
 
             return redirect()
                 ->route(

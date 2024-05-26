@@ -10,7 +10,7 @@ class Image extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'image_id';
+    protected $primaryKey = 'id';
     protected $table = 'images';
     protected $fillable = ['image_path'];
 

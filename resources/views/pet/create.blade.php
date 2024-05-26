@@ -10,9 +10,14 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <form method="POST" class="w-full flex flex-col md:grid grid-cols-12 ga-2 md:gap-4"
-                        action="{{ route('pet.store', ['user' => Auth::user()->user_id]) }}">
+                        action="{{ route('pet.store', ['user' => Auth::user()->user_id]) }}"
+                        enctype="multipart/form-data">
                         @csrf
 
+                        <div class="col-span-12">
+                            <x-label for="pet_name" :value="__('pet.avatar')" />
+                            <input type="file" name="pet_avatar" id="pet_avatar">
+                        </div>
                         <div class="col-span-6">
                             <x-label required for="pet_name" :value="__('Pet Name')" />
 

@@ -70,6 +70,8 @@ class CustomerProfileController extends Controller
 
             $user->update();
 
+            uploadImg($request, 'user_avatar', $user);
+
             return redirect()->route('customer-profile.index')->with('success', __('User updated successfully'));
         } catch (Exception $e) {
             return redirect()->route('customer-profile.index')->with('error', $e->getMessage());

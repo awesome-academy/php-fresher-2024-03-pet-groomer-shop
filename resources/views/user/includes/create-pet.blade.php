@@ -1,7 +1,12 @@
  <x-modal :title="__('Create Pet')" :btnText="__('Create Pet')" btnClass="btn-sm">
      <form method="POST" class="w-full flex flex-col md:grid grid-cols-12 ga-2 md:gap-4"
-         action="{{ route('pet.store', ['user' => $user->user_id]) }}">
+         action="{{ route('pet.store', ['user' => $user->user_id]) }}" enctype="multipart/form-data">
          @csrf
+
+         <div class="col-span-12">
+             <x-label for="pet_name" :value="__('pet.avatar')" />
+             <input type="file" name="pet_avatar" id="pet_avatar">
+         </div>
 
          <div class="col-span-6">
              <x-label required for="pet_name" :value="__('Pet Name')" />
