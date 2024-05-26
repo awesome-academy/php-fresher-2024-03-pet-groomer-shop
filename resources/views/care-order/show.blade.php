@@ -16,13 +16,21 @@
                         {{ trans('care-order.status') }}: <span>{{ $careOrder->order_status_name }}</span>
                     </h4>
                     <div class="flex flex-wrap justify-between items-center">
-                        <div class="flex flex-wrap gap-6">
-                            <div class="my-3 font-medium text-gray-900">
-                                ⚖{{ trans('Pet Weight') }} : {{ $careOrder->pet->weight_name }}
+                        <div class="flex items-center gap-5">
+                            @if ($careOrder->pet->image->image_path ?? false)
+                                <img class="w-36 h-36 my-4 rounded-md shadow-sm"
+                                    src="{{ asset('storage/' . $pet->image->image_path) }}" alt="pet_avatar">
+                            @else
+                            @endif
+                            <div>
+                                <div class="my-3 font-medium text-gray-900">
+                                    ⚖{{ trans('Pet Weight') }} : {{ $careOrder->pet->weight_name }}
+                                </div>
+                                <div class="my-3 font-medium text-gray-900">
+                                    🎂{{ trans('Pet Birthdate') }} : {{ formatDate($careOrder->pet->pet_birthdate) }}
+                                </div>
                             </div>
-                            <div class="my-3 font-medium text-gray-900">
-                                🎂{{ trans('Pet Birthdate') }} : {{ formatDate($careOrder->pet->pet_birthdate) }}
-                            </div>
+
                         </div>
                         <div>
                             {{ trans('employee.assigned') }}:

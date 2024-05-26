@@ -32,6 +32,7 @@ class Pet extends Model
         'pet_birthdate',
         'breed_id',
         'user_id',
+        'is_active',
     ];
 
     public function user(): BelongsTo
@@ -77,17 +78,5 @@ class Pet extends Model
     public function checkOwner(): bool
     {
         return $this->user_id === auth()->user()->user_id;
-    }
-
-    public static function getPetOptions($isOwner)
-    {
-        $petOptions = self::pluck('pet_id', 'pet_name');
-        if ($isOwner) {
-            $petOptions = self::where('user_id', getUser()->user_id)->pluck('pet_id', 'pet_name');
-        }
-
-        $petOptions[__('All')] = '';
-
-        return $petOptions;
     }
 }

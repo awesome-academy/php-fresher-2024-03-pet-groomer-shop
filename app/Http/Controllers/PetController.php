@@ -6,6 +6,7 @@ use App\Enums\PetTypeEnum;
 use App\Http\Requests\PetRequest;
 use App\Http\Requests\Search\PetSearchRequest;
 use App\Models\Breed;
+use App\Models\Image;
 use App\Models\Pet;
 use App\Models\Role;
 use App\Models\User;
@@ -75,6 +76,7 @@ class PetController extends Controller
             $userIDInput = $request->input('user_id');
             $data['user_id'] = $userIDInput ?? $userID;
             $data['is_active'] = $request->has('is_active') ? 1 : 0;
+            $pet = Pet::create($data);
 
             $pet = Pet::create($data);
             uploadImg($request, 'pet_avatar', $pet);
@@ -132,6 +134,14 @@ class PetController extends Controller
             );
 
             $data['is_active'] = $request->has('is_active') ? 1 : 0;
+            $pet->update($data);
+
+            if ((int) $redirectValue === 1) {
+                return redirect()->route('pet.index')->with(
+                    'success',
+                    __('Pet updated successfully')
+                );
+            }
 
             $pet->update($data);
             uploadImg($request, 'pet_avatar', $pet);
@@ -141,6 +151,9 @@ class PetController extends Controller
                     __('Pet updated successfully')
                 );
             }
+
+            $image = new Image();
+            $image->upload($request, 'pet_avatar', $pet);
 
             return redirect()->route('user.show', $userID)->with(
                 'success',

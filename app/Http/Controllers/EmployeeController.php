@@ -44,32 +44,62 @@ class EmployeeController extends Controller
             abort(404);
         }
 
+        $breadcrumbItems = [
+            [
+                'text' => trans('employee.employee'),
+                'url' => route('employee.index'),
+            ],
+            [
+                'text' => trans('employee.assign_task'),
+                'url' => route('employee.assign-task-page', ['branch' => $branchID, 'employee' => $userID]),
+            ],
+        ];
         $orders = CareOrder::where('branch_id', $branchID)
             ->with('assignTask')
             ->orderBy('updated_at', 'desc')
             ->paginate(config('constant.data_table.item_per_page'))->withQueryString();
 
-        return view('employee.assign-task', [
-            'orders' => $orders,
-            'userID' => $userID,
-            'branchID' => $branchID,
-            'breadcrumbItems' => $breadcrumbItems,
-        ]);
+        return view(
+            'employee.assign-task',
+            [
+
+                'orders' => $orders,
+
+                'userID' => $userID,
+
+                'branchID' => $branchID,
+                'breadcrumbItems' => $breadcrumbItems,
+            ]
+        );
     }
 
     public function assignTask(AssignTaskRequest $request, $userID, $orderID)
     {
         DB::beginTransaction();
         try {
+            $fromTime = $request->from_time;
+            $toTime = $request->to_time;
             $user = User::findOrFail($userID);
-            $user->assignTask()
-                ->attach(
-                    $orderID,
-                    [
-                        'from_time' => $request->from_time,
-                        'to_time' => $request->to_time,
-                    ]
-                );
+
+            if (Gate::denies('assignTask', $user)) {
+                throw new Exception(trans('permission.update_fail'));
+            }
+
+            if ($user->isAssigned($orderID)) {
+                throw new Exception(trans('employee.already_assigned'));
+            }
+
+            if ($user->isOverlappingTask($fromTime, $toTime)) {
+                throw new Exception(trans('employee.overlapping'));
+            }
+
+            $user->assignTask()->attach($orderID, ['from_time' => $fromTime, 'to_time' => $toTime]);
+
+            $order = CareOrder::findOrFail($orderID);
+            $order->order_status = OrderStatusEnum::IN_PROGRESS;
+            $order->save();
+
+            DB::commit();
 
             return redirect()->back()->with('success', trans('employee.success'));
         } catch (Exception $e) {
