@@ -39,8 +39,8 @@ class CareOrderController extends Controller
             $branches = Branch::pluck('branch_id', 'branch_name');
 
             $pet = Pet::findOrFail($petID);
-            if (!$pet->checkOwner()) {
-                throw new \Exception();
+            if (!$pet->is_active || !$pet->checkOwner()) {
+                throw new \Exception('');
             }
 
             $petServices = PetService::all();

@@ -18,12 +18,11 @@
                         <thead class="border-b  font-medium ">
                             <tr>
                                 <th scope="col" class="px-6 py-4">#</th>
+                                <th scope="col" class="px-6 py-4">{{ __('pet.avatar') }}</th>
                                 <th scope="col" class="px-6 py-4">{{ __('Pet Name') }}</th>
                                 <th scope="col" class="px-6 py-4">{{ __('Pet Type') }}</th>
                                 <th scope="col" class="px-6 py-4">{{ __('Pet Birthdate') }}</th>
                                 <th scope="col" class="px-6 py-4">{{ __('Is Active') }}</th>
-                                <th scope="col" class="px-6 py-4">{{ __('Pet Owner') }}</th>
-
                                 <th scope="col" class="px-6 py-4">{{ __('Action') }}</th>
 
 
@@ -34,19 +33,25 @@
                             @forelse ($pets as $pet)
                                 <tr class="border-b">
                                     <td class="whitespace-nowrap px-6 py-4">{{ $pet->pet_id }}</td>
+                                    <td class="whitespace-nowrap px-6 py-4">
+
+                                        @if ($pet->image->image_path ?? false)
+                                            <img class="w-16 h-16 my-4 rounded-md shadow-sm"
+                                                src="{{ asset('storage/' . $pet->image->image_path) }}"
+                                                alt="pet_avatar" />
+                                        @else
+                                            <img
+                                                class="w-16 h-16 my-4 rounded-md shadow-sm"
+                                                src="{{ asset('img/default-image.png') }}" alt="default_img">
+                                        @endif
+                                    </td>
                                     <td class="whitespace-nowrap px-6 py-4 font-medium">{{ $pet->pet_name }}</td>
                                     <td class="whitespace-nowrap px-6 py-4">{{ $pet->pet_type_name }}</td>
                                     <td class="whitespace-nowrap px-6 py-4">{{ formatDate($pet->pet_birthdate) }}</td>
                                         {{ $pet->is_active_name }}</td>
-                                    <td class="whitespace-nowrap px-6 py-4">
 
-                                        <a class="text-indigo-600"
-                                            href="{{ route('user.show', $pet->user->user_id) }}">
-                                            {{ $pet->user->user_email }}
-                                        </a>
-                                    </td>
 
-                                    <td class="whitespace-nowrap px-6 py-4 flex gap-2">
+                                    <td class="whitespace-nowrap px-6 py-4 mt-6 flex gap-2">
 
                                         @include('customer.pet.includes.show', [
                                             'pet' => $pet,

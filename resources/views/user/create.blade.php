@@ -19,8 +19,7 @@
                         </div>
 
                         <div class="col-span-12">
-                            <x-label for="user_name" :value="__('Avatar')" />
-                            <input type="file" name="user_avatar" id="user_avatar">
+                            <x-show-image id="user_avatar" label="User Avatar" />
                         </div>
                         <!-- First Name -->
                         <div class="col-span-6">

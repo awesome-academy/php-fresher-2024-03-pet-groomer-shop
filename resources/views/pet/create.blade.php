@@ -15,8 +15,8 @@
                         @csrf
 
                         <div class="col-span-12">
-                            <x-label for="pet_name" :value="__('pet.avatar')" />
-                            <input type="file" name="pet_avatar" id="pet_avatar">
+                            <x-show-image id="pet_avatar" :label="__('pet.avatar')" />
+                       
                         </div>
                         <div class="col-span-6">
                             <x-label required for="pet_name" :value="__('Pet Name')" />
