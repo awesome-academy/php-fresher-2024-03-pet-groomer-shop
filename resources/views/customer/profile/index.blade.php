@@ -116,12 +116,18 @@
                         </div>
 
 
-                        <div class="col-span-12 flex items-center justify-end mt-4">
-                            <x-button class="ml-4">
+                        <div class="col-span-12 flex items-center justify-end mt-4 gap-2">
+                            <a href="{{ route('change.password') }}">
+                                <x-button type="button" class="ml-4">
+                                    {{ __('auth.change_password') }}
+                                </x-button>
+                            </a>
+                            <x-button type="submit" class="ml-4">
                                 {{ __('Update') }}
                             </x-button>
                         </div>
                     </form>
+
 
 
                 </div>

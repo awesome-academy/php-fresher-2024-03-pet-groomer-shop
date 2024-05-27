@@ -5,14 +5,14 @@ namespace App\Http\Controllers\Customer;
 use App\Enums\PetTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PetRequest;
+use App\Http\Requests\Search\PetSearchRequest;
 use App\Models\Breed;
 use App\Models\Pet;
 use App\Models\Role;
-use Illuminate\Http\Request;
 
 class CustomerPetController extends Controller
 {
-    public function index(Request $request)
+    public function index(PetSearchRequest $request)
     {
         $conditions = formatQuery($request->query());
         $pets = Pet::with(['user', 'breed'])
@@ -76,6 +76,7 @@ class CustomerPetController extends Controller
             $pet->fill($request->all());
             $pet->user_id = $customerID;
             $pet->is_active = $request->has('is_active') ? 1 : 0;
+
             $pet->save();
             uploadImg($request, 'pet_avatar', $pet);
 

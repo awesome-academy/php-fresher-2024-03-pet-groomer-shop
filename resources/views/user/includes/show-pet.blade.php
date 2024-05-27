@@ -8,17 +8,7 @@
             :value="$redirect_pet_index ?? 0" required autofocus />
 
         <div class="col-span-12">
-
-            @if ($pet->image->image_path ?? false)
-                <img class="w-24 h-24 my-4 rounded-md shadow-sm" src="{{ asset('storage/' . $pet->image->image_path) }}"
-                    alt="user_avatar">
-            @else
-                <img class="w-24 h-24 my-4 rounded-md shadow-sm" src="{{ asset('img/default-image.png') }}"
-                    alt="pet_avatar">
-            @endif
-            <x-label for="pet_avatar" :value="__('Avatar')" />
-
-            <input type="file" name="pet_avatar" id="pet_avatar">
+            <x-show-image :path="$pet->image->image_path ?? false" id="pet_avatar" :label="__('pet.avatar')" />
         </div>
 
         <div class="col-span-6">

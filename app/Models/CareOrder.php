@@ -60,7 +60,7 @@ class CareOrder extends Model
             'care_order_detail',
             'order_id',
             'pet_service_id'
-        )->withPivot(['pet_service_price'])->withTimestamps();
+        )->withPivot(['pet_service_price']);
     }
 
     public function petServices(): HasManyThrough
