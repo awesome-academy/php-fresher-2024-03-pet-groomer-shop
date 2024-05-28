@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Enums\RoleEnum;
 use App\Http\Requests\Search\UserSearchRequest;
-use App\Http\Requests\UserRequest;
 use App\Models\Branch;
 use App\Models\Breed;
 use App\Models\Role;

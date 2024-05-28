@@ -25,7 +25,7 @@ class CouponRequest extends FormRequest
     {
         return [
             'coupon_name' => ['required', 'string', 'min:3', 'max:255'],
-            'coupon_code' => ['required', 'string', 'min:10', 'max:10', 'unique:coupons'],
+            'coupon_code' => ['required', 'string', 'min:15','max:17', 'unique:coupons'],
             'coupon_price' => ['required', 'numeric', 'min:0', 'max:10000000'],
             'expiry_date' => ['required', 'date', 'after:today'],
             'current_number' => ['required', 'numeric', 'min:0', 'max:10000000', 'lt:max_number'],

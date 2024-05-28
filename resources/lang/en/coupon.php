@@ -22,4 +22,6 @@ return [
     'create_error' => 'Coupon created failed',
     'update_error' => 'Coupon updated failed',
     'delete_error' => 'Coupon deleted failed',
+    'used_pet' => 'This coupon already used for this pet',
+    'used_user' => 'You already used this coupon',
 ];

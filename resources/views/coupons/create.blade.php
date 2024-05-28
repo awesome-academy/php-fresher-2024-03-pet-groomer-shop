@@ -42,7 +42,11 @@
                         </div>
 
                         <div class="col-span-6">
-                            <x-label for="coupon_code" required :value="__('coupon.code')" />
+                            <div class="flex items-center gap-4">
+                                <x-label for="coupon_code" required :value="__('coupon.code')" />
+                                <x-icon.generate class="w-5 h-5 mb-2 cursor-pointer" id="generate-icon" />
+                            </div>
+
 
                             <x-input id="coupon_code" class="block mt-1 w-full" type="text" name="coupon_code"
                                 :value="old('coupon_code')" required autofocus />

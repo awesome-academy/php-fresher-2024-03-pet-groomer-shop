@@ -13,7 +13,9 @@ use App\Models\Pet;
 use App\Models\PetService;
 use App\Models\PetServicePrice;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class PaymentController extends Controller
@@ -52,7 +54,7 @@ class PaymentController extends Controller
     public function getCoupon(Request $request)
     {
         $validatedData = Validator::make($request->all(), [
-            'coupon_code' => 'nullable|size:10|string',
+            'coupon_code' => 'nullable|string',
         ]);
 
         if ($validatedData->fails()) {
@@ -82,6 +84,7 @@ class PaymentController extends Controller
      */
     public function store(PaymentRequest $request, $petID)
     {
+        DB::beginTransaction();
         try {
             $pet = Pet::findOrFail($petID);
             if (!$pet->checkOwner()) {
@@ -97,9 +100,17 @@ class PaymentController extends Controller
             $order = $this->createOrder($request, $pet, $coupon);
             $this->attachPetService($order, $petServices);
             $this->setHotelService($order);
+            DB::commit();
 
-            return response()->json(['success' => trans('payment.success'), 'url' => route('payment.confirm')]);
+            return response()
+                ->json([
+                    'status' => 200,
+                    'success' => trans('payment.success'),
+                    'url' => route('payment.confirm'),
+                ]);
         } catch (\Exception $e) {
+            DB::rollBack();
+
             return response()->json(['errors' => $e->getMessage()]);
         }
     }
@@ -238,6 +249,20 @@ class PaymentController extends Controller
 
     private function createOrder($request, $pet, $coupon)
     {
+        if ($coupon) {
+            if ($coupon->careOrders()->where('user_id', getUser()->user_id)->exists()) {
+                throw new Exception(trans('coupon.used_user'));
+            }
+
+            $currentNumber = $coupon->current_number + 1;
+            if ($currentNumber > $coupon->max_number) {
+                throw new Exception(trans('coupon.max_limit'));
+            }
+
+            $coupon->current_number++;
+            $coupon->save();
+        }
+
         $careOrder = session('careOrder');
 
         $data = [

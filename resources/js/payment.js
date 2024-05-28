@@ -19,6 +19,8 @@ const payment = {
         });
     },
     displayCoupon: function (message) {
+        window.$("html, body").animate({ scrollTop: 0 }, "slow");
+
         const couponText = window.$("#coupon_text");
         if (message === "expired" || message === "not_found") {
             const text = window.trans("coupon.expired");
@@ -35,13 +37,13 @@ const payment = {
             couponText
                 .text(window.trans("coupon.max_limit"))
                 .addClass("text-red-500");
-        }
-        if (message.errors) {
-            couponText
-                .text(message.errors.coupon_code[0])
-                .addClass("text-red-500");
             return;
         }
+        if (message.errors) {
+            couponText.text(message.errors).addClass("text-red-500");
+            return;
+        }
+
         couponText
             .text(window.trans("coupon.apply_success"))
             .removeClass()
@@ -69,6 +71,10 @@ const payment = {
             method: "POST",
             data: passData,
             success: function (data) {
+                if (data.status !== 200) {
+                    payment.displayCoupon(data);
+                    return;
+                }
                 window.location.href = data.url;
             },
         });

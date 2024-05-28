@@ -76,8 +76,6 @@ class PetController extends Controller
             $data['user_id'] = $userIDInput ?? $userID;
             $data['is_active'] = $request->has('is_active') ? 1 : 0;
             $pet = Pet::create($data);
-
-            $pet = Pet::create($data);
             uploadImg($request, 'pet_avatar', $pet);
             if ($userIDInput) {
                 return redirect()->route('pet.index')->with('success', __('Pet created successfully'));
