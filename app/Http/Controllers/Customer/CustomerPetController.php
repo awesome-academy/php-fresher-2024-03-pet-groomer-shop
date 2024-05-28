@@ -80,9 +80,6 @@ class CustomerPetController extends Controller
             $pet->save();
             uploadImg($request, 'pet_avatar', $pet);
 
-            $pet->save();
-            uploadImg($request, 'pet_avatar', $pet);
-
             return redirect()
                 ->route(
                     'customer-pet.index',

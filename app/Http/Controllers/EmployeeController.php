@@ -36,10 +36,6 @@ class EmployeeController extends Controller
 
     public function assignTaskPage($userID, $branchID)
     {
-        $breadcrumbItems = [
-            ['text' => trans('employee.employee'), 'url' => route('employee.index')],
-            ['text' => trans('employee.assign_task'), 'url' => route('role.create')],
-        ];
         if (!Branch::checkValid($branchID) || !User::checkValid($userID)) {
             abort(404);
         }
@@ -63,11 +59,12 @@ class EmployeeController extends Controller
         return view(
             'employee.assign-task',
             [
-                'employee' => $employee,
+
                 'orders' => $orders,
                 'userID' => $userID,
                 'branchID' => $branchID,
                 'breadcrumbItems' => $breadcrumbItems,
+                'employee' => $employee,
             ]
         );
     }

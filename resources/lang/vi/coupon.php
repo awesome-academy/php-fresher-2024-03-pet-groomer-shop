@@ -22,4 +22,6 @@ return [
     'create_error' => 'Lỗi khi tạo coupon',
     'update_error' => 'Lỗi khi cập nhật coupon',
     'delete_error' => 'Lỗi khi xóa coupon',
+    'used_pet' => 'Mã giảm giá đã áp dụng cho thú cưng này',
+    'used_user' => 'Mã giảm giá này bạn đã áp dụng',
 ];
