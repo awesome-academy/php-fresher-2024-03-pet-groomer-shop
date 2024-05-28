@@ -33,28 +33,4 @@ class Breed extends Model
     {
         return PetTypeEnum::getTranslated()[$this->breed_type];
     }
-
-    public static function checkValidName($request): bool
-    {
-        return self::where('breed_name', $request->breed_name)
-            ->where('breed_type', $request->breed_type)->exists();
-    }
-
-    public static function checkValidNameUpdate($request, $id): bool
-    {
-        $breed = self::find($id);
-        if ($breed->breed_name === $request->breed_name && $breed->breed_type === $request->breed_type) {
-            return false;
-        }
-
-        return self::where('breed_name', $request->breed_name)
-            ->where('breed_type', $request->breed_type)->exists();
-    }
-
-    public static function checkValidPetType($breedID, $petType): bool
-    {
-        $breed = self::find($breedID);
-
-        return (int) $breed->breed_type === (int) $petType;
-    }
 }

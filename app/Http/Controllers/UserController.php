@@ -27,11 +27,9 @@ class UserController extends Controller
             ->paginate(config('constant.data_table.item_per_page'))->withQueryString();
 
         [$roles] = $this->getOptions();
-        $roles['all'] = '';
         $roleEnum = array_flip(\App\Enums\RoleEnum::getConstants());
         $oldInput = $request->all();
         $roles[__('All')] = '';
-        $roleEnum = array_flip(\App\Enums\RoleEnum::getConstants());
 
         return view(
             'user.index',
