@@ -68,7 +68,7 @@ class CustomerPetController extends Controller
     public function store(PetRequest $request, $customerID)
     {
         try {
-            if (Breed::checkValidPetType($request->breed_id, $request->pet_type)) {
+            if (!Breed::checkValidPetType($request->breed_id, $request->pet_type)) {
                 throw new \Exception(__('breed.invalid_type'));
             }
 
@@ -76,6 +76,9 @@ class CustomerPetController extends Controller
             $pet->fill($request->all());
             $pet->user_id = $customerID;
             $pet->is_active = $request->has('is_active') ? 1 : 0;
+
+            $pet->save();
+            uploadImg($request, 'pet_avatar', $pet);
 
             $pet->save();
             uploadImg($request, 'pet_avatar', $pet);

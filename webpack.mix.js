@@ -24,7 +24,8 @@ mix.js(
         "resources/js/care-order.js",
         "resources/js/payment.js",
         "resources/js/branch.js",
-        'resources/js/care-order-history.js'
+        'resources/js/care-order-history.js',
+        'resources/js/image.js'
     ],
     "public/js/app.js"
 )

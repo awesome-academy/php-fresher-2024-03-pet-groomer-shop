@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class CareOrder extends Model
@@ -63,25 +62,6 @@ class CareOrder extends Model
         )->withPivot(['pet_service_price']);
     }
 
-    public function petServices(): HasManyThrough
-    {
-        return $this->hasManyThrough(
-            PetService::class,
-            CareOrderDetail::class,
-            'order_id',
-            'pet_service_id',
-            'order_id',
-            'pet_service_id'
-        );
-    }
-
-    public function getOrderStatusNameAttribute()
-    {
-        $orderStatusNames = OrderStatusEnum::getTranslated();
-
-        return $orderStatusNames[$this->order_status];
-    }
-
     public function isCancelable()
     {
         return $this->order_status <= OrderStatusEnum::CONFIRMED;
@@ -100,5 +80,17 @@ class CareOrder extends Model
     public static function getStatusOptions()
     {
         return array_flip(OrderStatusEnum::getTranslated());
+    }
+
+    public function getOrderStatusNameAttribute()
+    {
+        $orderStatusNames = OrderStatusEnum::getTranslated();
+
+        return $orderStatusNames[$this->order_status];
+    }
+
+    public function isAssignable()
+    {
+        return $this->order_status === OrderStatusEnum::CONFIRMED;
     }
 }

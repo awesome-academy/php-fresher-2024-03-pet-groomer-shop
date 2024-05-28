@@ -9,7 +9,7 @@
             :value="$redirect_pet_index ?? 0" required autofocus />
 
         <div class="col-span-12">
-            <x-show-image :path="$pet->image->image_path ?? false" id="pet_avatar" :label="__('pet.avatar')" />
+            <x-show-image dataID="{{ $pet->pet_id }}" :path="$pet->image->image_path ?? false" id="pet_avatar" :label="__('pet.avatar')" />
         </div>
 
         <div class="col-span-6">

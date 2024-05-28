@@ -58,15 +58,14 @@ class EmployeeController extends Controller
             ->with('assignTask')
             ->orderBy('updated_at', 'desc')
             ->paginate(config('constant.data_table.item_per_page'))->withQueryString();
+        $employee = User::findOrFail($userID);
 
         return view(
             'employee.assign-task',
             [
-
+                'employee' => $employee,
                 'orders' => $orders,
-
                 'userID' => $userID,
-
                 'branchID' => $branchID,
                 'breadcrumbItems' => $breadcrumbItems,
             ]

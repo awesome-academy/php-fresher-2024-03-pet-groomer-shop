@@ -7,7 +7,6 @@ use App\Http\Requests\Search\UserSearchRequest;
 use App\Http\Requests\UserRequest;
 use App\Models\Branch;
 use App\Models\Breed;
-use App\Models\Image;
 use App\Models\Role;
 use App\Models\User;
 use App\Scopes\ActiveUserScope;
@@ -163,8 +162,7 @@ class UserController extends Controller
             }
 
             $user->save();
-            $image = new Image();
-            $image->upload($request, 'user_avatar', $user);
+            uploadImg($request, 'user_avatar', $user);
 
             return redirect()->route('user.show', ['user' => $id])->with('success', __('User updated successfully'));
         } catch (Exception $e) {
