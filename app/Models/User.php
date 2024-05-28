@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class User extends Authenticatable
@@ -70,7 +69,7 @@ class User extends Authenticatable
     // local scope
     public function scopeAdmin($query)
     {
-        return $query->where('is_admin', RoleEnum::ADMIN)->exists();
+        return $query->where('is_admin', RoleEnum::ADMIN);
     }
 
     //Relations
@@ -138,7 +137,7 @@ class User extends Authenticatable
     {
         $checkGender = Config::get('constant.gender');
 
-        return $checkGender[$this->gender];
+        return $checkGender[$this->user_gender];
     }
 
     public function setUsernameAttribute($value)
@@ -146,43 +145,10 @@ class User extends Authenticatable
         $this->attributes['username'] = Str::slug($value, '-');
     }
 
-    public static function getUserByID($id)
-    {
-        return self::withoutGlobalScope(ActiveUserScope::class)->findOrFail($id);
-    }
-
-    public function hasPermission(string $permission)
-    {
-        return $this->role->rolePermission->pluck('permission_name')->contains($permission);
-    }
-
-    public static function checkValid($id)
-    {
-        return self::where('user_id', $id)->exists();
-    }
-
     public function getIsActiveNameAttribute(): string
     {
         $activeName = StatusEnum::getTranslated();
 
         return $activeName[$this->is_active];
-    }
-
-    public function isAssigned($orderID)
-    {
-        return DB::table('users')
-            ->join('assign_task', 'users.user_id', '=', 'assign_task.user_id')
-            ->where('assign_task.order_id', $orderID)
-            ->select('assign_task.*')
-            ->exists();
-    }
-
-    public function isOverlappingTask($fromTime, $toTime)
-    {
-        return $this
-            ->assignTask()
-            ->wherePivot('from_time', '<', $toTime)
-            ->wherePivot('to_time', '>', $fromTime)
-            ->exists();
     }
 }

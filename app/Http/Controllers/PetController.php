@@ -33,7 +33,6 @@ class PetController extends Controller
             'petTypesSelected' => $petTypesSelected,
             'petTypesSelectedExtra' => $petTypesSelectedExtra,
             'oldInput' => $oldInput,
-            'petTypesSelectedExtra' => $petTypesSelectedExtra,
         ]);
     }
 
@@ -138,6 +137,10 @@ class PetController extends Controller
                     __('Pet updated successfully')
                 );
             }
+
+            $pet->update($data);
+
+            uploadImg($request, 'pet_avatar', $pet);
 
             return redirect()->route('user.show', $userID)->with(
                 'success',

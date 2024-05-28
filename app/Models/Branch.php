@@ -31,9 +31,4 @@ class Branch extends Model
     {
         return $this->hasMany(CareOrder::class, 'branch_id', 'branch_id');
     }
-
-    public static function checkValid($branchID)
-    {
-        return self::where('branch_id', $branchID)->exists();
-    }
 }
