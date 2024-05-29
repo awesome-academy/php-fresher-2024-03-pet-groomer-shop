@@ -19,17 +19,7 @@
                         @csrf
 
                         <div class="col-span-12">
-
-                            @if ($user->image->image_path ?? false)
-                                <img class="w-36 h-36 my-4 rounded-md shadow-sm"
-                                    src="{{ asset('storage/' . $user->image->image_path) }}" alt="user_avatar">
-                            @else
-                                <img class="w-36 h-36 my-4 rounded-md shadow-sm" src="{{ asset('img/default-image.png') }}"
-                                    alt="user_avatar">
-                            @endif
-                            <x-label for="user_avatar" :value="__('Avatar')" />
-
-                            <input type="file" name="user_avatar" id="user_avatar">
+                            <x-show-image :path="$user->image->image_path ?? ''" id="user_avatar" :label="__('Avatar')" />
                         </div>
 
                         <div class="col-span-6">

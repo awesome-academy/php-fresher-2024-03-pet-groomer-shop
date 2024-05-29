@@ -15,7 +15,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->job(new \App\Jobs\CalculateDailyRevenue('daily'))->dailyAt('08:00');
+        $schedule->job(new \App\Jobs\CalculateDailyRevenue('weekly'))->weekly();
+        $schedule->job(new \App\Jobs\CalculateDailyRevenue('monthly'))->monthly();
     }
 
     /**
@@ -28,5 +30,15 @@ class Kernel extends ConsoleKernel
         $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
+    }
+
+    /**
+     * Get the timezone that should be used by default for scheduled events.
+     *
+     * @return \DateTimeZone|string|null
+     */
+    protected function scheduleTimezone()
+    {
+        return 'Asia/Ho_Chi_Minh';
     }
 }
