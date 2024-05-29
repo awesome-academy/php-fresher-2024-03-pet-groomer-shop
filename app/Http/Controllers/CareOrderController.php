@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\OrderStatusEnum;
 use App\Http\Requests\CareOrderManageRequest;
+use App\Jobs\SendOrderStatusChangeEmail;
 use App\Repositories\Branch\BranchRepositoryInterface;
 use App\Repositories\CareOrder\CareOrderRepositoryInterface;
 use App\Repositories\CareOrderDetail\CareOrderDetailRepositoryInterface;
@@ -134,8 +135,8 @@ class CareOrderController extends Controller
             }
 
             $orderStatus = (int) $request->input('order_status');
-            $this->careOrderRepo->updateCareOrderStatus($orderStatus, $id);
-
+            $order = $this->careOrderRepo->updateCareOrderStatus($orderStatus, $id);
+            SendOrderStatusChangeEmail::dispatch($order, $order->user()->get()->user_email);
             flashMessage('success', trans('care-order.update_success'));
         } catch (Exception $e) {
             flashMessage('error', $e->getMessage());
