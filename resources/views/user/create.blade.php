@@ -145,7 +145,7 @@
                         </div>
 
                         <div class="col-span-12 flex items-center justify-end mt-4">
-                            <x-button class="ml-4">
+                            <x-button id="submit-btn" class="ml-4">
                                 {{ __('Create') }}
                             </x-button>
                         </div>

@@ -25,6 +25,7 @@ return [
     ],
     'data_table' => [
         'item_per_page' => 15,
+        'order_history_page' => 10,
     ],
     'hotel_hour_prices' => [
         'one' => 50000,
