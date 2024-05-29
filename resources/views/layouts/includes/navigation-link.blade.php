@@ -29,18 +29,20 @@
         {{ __('employee.employee') }}
     </x-nav-link>
 </div>
-<div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-    <x-nav-link :href="route('coupon.index')" :active="request()->routeIs('coupon.index')">
-        {{ __('coupon.coupon') }}
-    </x-nav-link>
-</div>
-<div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-    <x-nav-link :href="route('breed.index')" :active="request()->routeIs('breed.index')">
-        {{ __('breed.breed') }}
-    </x-nav-link>
-</div>
-<div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-    <x-nav-link :href="route('branch.index')" :active="request()->routeIs('branch.index')">
-        {{ __('branch.branch') }}
-    </x-nav-link>
-</div>
+@manager
+    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+        <x-nav-link :href="route('coupon.index')" :active="request()->routeIs('coupon.index')">
+            {{ __('coupon.coupon') }}
+        </x-nav-link>
+    </div>
+    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+        <x-nav-link :href="route('breed.index')" :active="request()->routeIs('breed.index')">
+            {{ __('breed.breed') }}
+        </x-nav-link>
+    </div>
+    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+        <x-nav-link :href="route('branch.index')" :active="request()->routeIs('branch.index')">
+            {{ __('branch.branch') }}
+        </x-nav-link>
+    </div>
+@endmanager

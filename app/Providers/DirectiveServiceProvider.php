@@ -33,6 +33,17 @@ class DirectiveServiceProvider extends ServiceProvider
             return $this->getEndPhp();
         });
 
+        Blade::directive('manager', function () {
+            return '<?php if(auth()->check() && (auth()->user()->role_id === '
+                . RoleEnum::MANGER
+                . ' || auth()->user()->role_id === '
+                . RoleEnum::ADMIN . ')): ?>';
+        });
+
+        Blade::directive('endmanager', function () {
+            return $this->getEndPhp();
+        });
+
         Blade::directive('notcustomer', function () {
             return '<?php if(auth()->check() && auth()->user()->role_id !== ' . RoleEnum::CUSTOMER . '): ?>';
         });

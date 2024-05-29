@@ -19,4 +19,8 @@ return [
     'create_fail' => 'Create Payment Failed',
     'update_fail' => 'Update Payment Failed',
     'delete_fail' => 'Delete Payment Failed',
+    'revenue' => 'Revenue',
+    'daily_revenue' => 'Daily Revenue',
+    'monthly_revenue' => 'Monthly Revenue',
+    'weekly_revenue' => 'Weekly Revenue',
 ];

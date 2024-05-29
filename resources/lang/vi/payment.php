@@ -19,4 +19,8 @@ return [
     'create_fail' => 'Tạo thanh toán thất bại',
     'update_fail' => 'Cập nhật thanh toán thất bại',
     'delete_fail' => 'Xóa thanh toán thất bại',
+    'revenue' => 'Doanh thu',
+    'daily_revenue' => 'Doanh thu hằng ngày',
+    'monthly_revenue' => 'Doanh thu hằng tháng',
+    'weekly_revenue' => 'Doanh thu hằng tuần',
 ];
