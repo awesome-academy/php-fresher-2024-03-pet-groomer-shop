@@ -6,20 +6,33 @@ use App\Enums\PetTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CareOrderRequest;
 use App\Http\Requests\Search\PetSearchRequest;
-use App\Models\Branch;
 use App\Models\Pet;
-use App\Models\PetService;
+use App\Repositories\Branch\BranchRepositoryInterface;
+use App\Repositories\Pet\PetRepositoryInterface;
+use App\Repositories\PetService\PetServiceRepositoryInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class CareOrderController extends Controller
 {
+    protected $petServiceRepo;
+    protected $petRepo;
+    protected $branchRepo;
+
+    public function __construct(
+        PetServiceRepositoryInterface $petServiceRepo,
+        PetRepositoryInterface $petRepo,
+        BranchRepositoryInterface $branchRepo
+    ) {
+        $this->petServiceRepo = $petServiceRepo;
+        $this->petRepo = $petRepo;
+        $this->branchRepo = $branchRepo;
+    }
+
     public function index(PetSearchRequest $request)
     {
         $conditions = formatQuery($request->query());
-        $pets = Pet::where('user_id', auth()->user()->user_id)
-            ->where($conditions)
-            ->paginate(config('constant.data_table.item_per_page'));
+        $pets = $this->petRepo->getPetCustomer($conditions);
         [$petTypesSelected, $petTypesSelectedExtra] = $this->getPetTypeOptions();
 
         return view('customer.care-order.index', [
@@ -36,14 +49,14 @@ class CareOrderController extends Controller
                 ['text' => trans('care-order.care-order'), 'url' => route('care-order.index')],
                 ['text' => trans('care-order.request'), 'url' => route('care-order.request-page', ['pet' => $petID])],
             ];
-            $branches = Branch::pluck('branch_id', 'branch_name');
+            $branches = $this->branchRepo->getBranchOption();
 
             $pet = Pet::findOrFail($petID);
             if (!$pet->is_active || !$pet->checkOwner()) {
                 throw new \Exception('');
             }
 
-            $petServices = PetService::all();
+            $petServices = $this->petServiceRepo->getAll();
 
             return view(
                 'customer.care-order.request',

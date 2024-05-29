@@ -2,40 +2,49 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\RoleEnum;
 use App\Http\Requests\Search\UserSearchRequest;
-use App\Models\Branch;
-use App\Models\Breed;
-use App\Models\Role;
+use App\Http\Requests\UserRequest;
 use App\Models\User;
-use App\Scopes\ActiveUserScope;
+use App\Repositories\Branch\BranchRepositoryInterface;
+use App\Repositories\Breed\BreedRepositoryInterface;
+use App\Repositories\Role\RoleRepositoryInterface;
+use App\Repositories\User\UserRepositoryInterface;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\View\View;
 
 class UserController extends Controller
 {
+    protected $userRepo;
+    protected $branchRepo;
+    protected $breedRepo;
+    protected $roleRepo;
+
+    public function __construct(
+        UserRepositoryInterface $userRepo,
+        BranchRepositoryInterface $branchRepo,
+        BreedRepositoryInterface $breedRepo,
+        RoleRepositoryInterface $roleRepo
+    ) {
+        $this->userRepo = $userRepo;
+        $this->branchRepo = $branchRepo;
+        $this->breedRepo = $breedRepo;
+        $this->roleRepo = $roleRepo;
+    }
+
     public function index(UserSearchRequest $request): View
     {
         $conditions = formatQuery($request->query());
-        $users = User::withoutGlobalScope(ActiveUserScope::class)->with('role')->where($conditions);
-        $users = $users->where($conditions)
-            ->orderBy('created_at', 'desc')
-            ->paginate(config('constant.data_table.item_per_page'))->withQueryString();
+        $users = $this->userRepo->getUserList($conditions);
 
         [$roles] = $this->getOptions();
         $roleEnum = array_flip(\App\Enums\RoleEnum::getConstants());
-        $oldInput = $request->all();
         $roles[__('All')] = '';
 
         return view(
             'user.index',
             [
                 'users' => $users,
-                'oldInput' => $oldInput,
+                'oldInput' => $request->all(),
                 'roles' => $roles,
                 'roleEnum' => $roleEnum,
             ]
@@ -69,19 +78,8 @@ class UserController extends Controller
     {
         try {
             $user = new User();
-            if (Gate::denies('create', User::class)) {
-                return redirect()->route('user.create')->with('error', __('You do not have permission to create user'));
-            }
-
-            $user->fill($request->all());
-            $user->is_active  = $request->has('is_active') ? 1 : 0;
-            $user->user_password = Hash::make($request->user_password);
-
-            if ($request->role_id === RoleEnum::ADMIN) {
-                $user->is_admin = 1;
-            }
-
-            $user->save();
+            $isActive = $request->has('is_active') ? 1 : 0;
+            $this->userRepo->storeUser($request->all(), $isActive);
             uploadImg($request, 'user_avatar', $user);
 
             return redirect()->route('user.index')->with('success', __('User created successfully'));
@@ -93,7 +91,7 @@ class UserController extends Controller
     public function show($id)
     {
         [$roles, $branches, $breeds] = $this->getOptions();
-        $user = User::with('pets')->withoutGlobalScope(ActiveUserScope::class)->findOrFail($id);
+        $user = $this->userRepo->getDetailUser($id);
         if ($user === null) {
             return abort(404);
         }
@@ -121,44 +119,8 @@ class UserController extends Controller
     {
         try {
             $data = $request->except(['user_email', 'username', 'user_password']);
-            $user = User::getUserByID($id);
-
-            if ($user->admin() && Gate::denies('updateAdmin', $user)) {
-                return redirect()->route(
-                    'user.show',
-                    ['user' => $id]
-                )->with(
-                    'error',
-                    __('You cannot update this user')
-                );
-            }
-
-            if (Gate::denies('update', $user)) {
-                return redirect()->route(
-                    'user.show',
-                    ['user' => $id]
-                )->with(
-                    'error',
-                    __('You cannot update this user')
-                );
-            }
-
-            $user->fill($data);
-
-            $user->is_active  = $request->has('is_active') ? 1 : 0;
-
-            if ($user->role_id === RoleEnum::ADMIN) {
-                $user->is_admin = 1;
-            } else {
-                $user->is_admin = 0;
-            }
-
-            // can't change admin role if you are admin and you are update yourself
-            if (Auth::user()->user_id === $id && Auth::user()->role_id === RoleEnum::ADMIN) {
-                $user->role_id = 1;
-            }
-
-            $user->save();
+            $isActive = $request->has('is_active') ? 1 : 0;
+            $user = $this->userRepo->updateUser($data, $id, $isActive);
             uploadImg($request, 'user_avatar', $user);
 
             return redirect()->route('user.show', ['user' => $id])->with('success', __('User updated successfully'));
@@ -170,20 +132,7 @@ class UserController extends Controller
     public function destroy($id)
     {
         try {
-            $user = User::withoutGlobalScope(ActiveUserScope::class)->findOrFail($id);
-            if ($user->admin() && Gate::denies('deleteAdmin', $user)) {
-                flashMessage('error', __('You cannot delete yourself or admin'));
-
-                return 'error';
-            }
-
-            if (!Gate::allows('delete', $user)) {
-                flashMessage('error', __('You cannot delete yourself or admin'));
-
-                return 'error';
-            }
-
-            $user->delete();
+            $this->userRepo->deleteUser($id);
 
             flashMessage('success', __('User deleted successfully'));
 
@@ -195,11 +144,11 @@ class UserController extends Controller
 
     private function getOptions()
     {
-        $roles = Role::pluck('role_id', 'role_name');
+        $roles = $this->roleRepo->getRoleOption();
 
-        $branches = Branch::pluck('branch_id', 'branch_name');
+        $branches = $this->branchRepo->getBranchOption();
 
-        $breeds = Breed::pluck('breed_id', 'breed_name');
+        $breeds = $this->breedRepo->getBreedOption();
 
         return [$roles, $branches, $breeds];
     }

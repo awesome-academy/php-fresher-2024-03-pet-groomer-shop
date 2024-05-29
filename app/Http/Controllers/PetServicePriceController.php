@@ -3,25 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PetServicePriceRequest;
-use App\Models\PetService;
-use App\Models\PetServicePrice;
-use App\Models\User;
+use App\Repositories\PetService\PetServiceRepositoryInterface;
+use App\Repositories\PetServicePrice\PetServicePriceRepositoryInterface;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\Gate;
 
 class PetServicePriceController extends Controller
 {
+    protected $petServiceRepo;
+    protected $petServicePriceRepo;
+
+    public function __construct(
+        PetServiceRepositoryInterface $petServiceRepo,
+        PetServicePriceRepositoryInterface $petServicePriceRepo
+    ) {
+        $this->petServiceRepo = $petServiceRepo;
+        $this->petServicePriceRepo = $petServicePriceRepo;
+    }
+
     public function index($petServiceID)
     {
         try {
             $this->checkValidPetService($petServiceID);
-            $petService = PetService::findOrFail($petServiceID);
-            $petServicePrices = PetServicePrice::where(
-                'pet_service_id',
-                $petServiceID
-            )->orderBy('pet_service_weight', 'asc')
-                ->paginate(config('constant.data_table.item_per_page'));
+            $petService = $this->petServiceRepo->findOrFail($petServiceID);
+            $petServicePrices = $this->petServicePriceRepo->getServicePriceList($petServiceID);
 
             return view(
                 'pet-service-price.index',
@@ -64,23 +69,7 @@ class PetServicePriceController extends Controller
     public function store(PetServicePriceRequest $request, $petServiceID)
     {
         try {
-            if (Gate::denies('create', User::class)) {
-                throw new Exception(trans('permission.create_fail'));
-            }
-
-            if (
-                PetServicePrice::checkExistWeight(
-                    $petServiceID,
-                    $request->pet_service_weight
-                )
-            ) {
-                throw new Exception(trans('pet-service-price.weight_exists'));
-            }
-
-            $petServicePrice = new PetServicePrice();
-            $petServicePrice->fill($request->all());
-            $petServicePrice->pet_service_id = $petServiceID;
-            $petServicePrice->save();
+            $this->petServicePriceRepo->storeServicePrice($request->all(), $petServiceID);
 
             return redirect()->route(
                 'pet-service-price.index',
@@ -115,7 +104,7 @@ class PetServicePriceController extends Controller
     {
         try {
             $this->checkValidPetService($petServiceID);
-            $petServicePrice = PetServicePrice::findOrFail($petServicePriceID);
+            $petServicePrice = $this->petServicePriceRepo->findOrFail($petServicePriceID);
 
             $breadcrumbItems = [
                 [
@@ -150,13 +139,7 @@ class PetServicePriceController extends Controller
     public function update(PetServicePriceRequest $request, $petServiceID, $petServicePriceID)
     {
         try {
-            $petServicePrice = PetServicePrice::findOrFail($petServicePriceID);
-            if (Gate::denies('update', $petServicePrice)) {
-                throw new Exception(trans('permission.update_fail'));
-            }
-
-            $petServicePrice->fill($request->all());
-            $petServicePrice->update();
+            $petServicePrice = $this->petServicePriceRepo->update($request->all(), $petServicePriceID);
 
             return redirect()
                 ->route(
@@ -180,13 +163,7 @@ class PetServicePriceController extends Controller
     public function destroy($petServiceID, $petServicePriceID)
     {
         try {
-            PetService::findOrFail($petServiceID);
-            $petServicePrice = PetServicePrice::findOrFail($petServicePriceID);
-            if (Gate::denies('delete', $petServicePrice)) {
-                throw new Exception(trans('permission.delete_fail'));
-            }
-
-            $petServicePrice->delete();
+            $this->petServicePriceRepo->deleteServicePrice($petServicePriceID);
             flashMessage('success', trans('pet-service-price.delete_success'));
         } catch (Exception $e) {
             flashMessage('error', trans('pet-service-price.delete_fail'));
@@ -195,7 +172,7 @@ class PetServicePriceController extends Controller
 
     private function checkValidPetService($petServiceID)
     {
-        if (!PetService::isValid($petServiceID)) {
+        if (!$this->petServiceRepo->isValid($petServiceID)) {
             abort(404);
         }
     }

@@ -2,37 +2,52 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\PetTypeEnum;
 use App\Http\Requests\PetRequest;
 use App\Http\Requests\Search\PetSearchRequest;
-use App\Models\Breed;
-use App\Models\Pet;
-use App\Models\Role;
-use App\Models\User;
+use App\Repositories\Breed\BreedRepositoryInterface;
+use App\Repositories\Pet\PetRepositoryInterface;
+use App\Repositories\Role\RoleRepositoryInterface;
+use App\Repositories\User\UserRepositoryInterface;
 use Exception;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 
 class PetController extends Controller
 {
+    protected $petRepo;
+    protected $breedRepo;
+    protected $roleRepo;
+    protected $userRepo;
+
+    public function __construct(
+        PetRepositoryInterface $petRepo,
+        BreedRepositoryInterface $breedRepo,
+        RoleRepositoryInterface $roleRepo,
+        UserRepositoryInterface $userRepo
+    ) {
+        $this->petRepo = $petRepo;
+        $this->breedRepo = $breedRepo;
+        $this->roleRepo = $roleRepo;
+        $this->userRepo = $userRepo;
+    }
+
     public function index(PetSearchRequest $request)
     {
         $conditions = formatQuery($request->query());
-        $pets = Pet::with(['user', 'breed'])->where($conditions)->paginate(config('constant.data_table.item_per_page'));
-        $oldInput = $request->all();
-        $breeds = Breed::pluck('breed_id', 'breed_name');
-        $petTypes = PetTypeEnum::getTranslated();
-        $petTypesSelected = array_flip($petTypes);
-        $petTypesSelectedExtra = $petTypesSelected;
-        $petTypesSelectedExtra[__('All')] = '';
+        $pets = $this->petRepo->getPetList($conditions);
+        $breeds = $this->breedRepo->getBreedOption();
+        [
+            $petTypes,
+            $petTypesSelected,
+            $petTypesSelectedExtra,
+        ] = $this->petRepo->getPetOptions();
 
         return view('pet.index', [
             'pets' => $pets,
             'breeds' => $breeds,
             'petTypes' => $petTypes,
             'petTypesSelected' => $petTypesSelected,
+            'oldInput' => $request->all(),
             'petTypesSelectedExtra' => $petTypesSelectedExtra,
-            'oldInput' => $oldInput,
+            'oldInput' => $request->all(),
         ]);
     }
 
@@ -42,12 +57,10 @@ class PetController extends Controller
             ['text' => trans('Pet'), 'url' => route('pet.index')],
             ['text' => trans('Create Pet'), 'url' => route('pet.create')],
         ];
-
-        $petTypes = PetTypeEnum::getTranslated();
-        $petTypesSelected = array_flip($petTypes);
-        $breeds = Breed::pluck('breed_id', 'breed_name');
-        $roles = Role::pluck('role_id', 'role_name');
-        $userOptions = User::pluck('user_id', 'user_email');
+        [$petTypes, $petTypesSelected] = $this->petRepo->getPetOptions();
+        $breeds = $this->breedRepo->getBreedOption();
+        $roles = $this->roleRepo->getRoleOption();
+        $userOptions = $this->userRepo->getUserOption();
 
         return view('pet.create', [
             'breeds' => $breeds,
@@ -63,30 +76,23 @@ class PetController extends Controller
     {
         try {
             $data = $request->except('_token');
-            if (!Breed::checkValidPetType($data['breed_id'], $data['pet_type'])) {
-                throw new Exception(trans('breed.invalid_type'));
-            }
-
-            if (Gate::denies('create', User::class)) {
-                throw new Exception(trans('permission.create_fail'));
-            }
-
             $userIDInput = $request->input('user_id');
-            $data['user_id'] = $userIDInput ?? $userID;
-            $data['is_active'] = $request->has('is_active') ? 1 : 0;
-            $pet = Pet::create($data);
-            uploadImg($request, 'pet_avatar', $pet);
+            $isActive = $request->has('is_active') ? 1 : 0;
+            $this->petRepo->storePet($data, $userID, $userIDInput, $isActive);
+            uploadImg($request, 'pet_avatar', 'pet_avatar');
             if ($userIDInput) {
-                return redirect()->route('pet.index')->with('success', __('Pet created successfully'));
+                return redirect()
+                    ->route('pet.index')
+                    ->with('success', __('Pet created successfully'));
             }
 
-            return redirect()->route('user.show', $userID)->with('success', __('Pet created successfully'));
+            return redirect()
+                ->route('user.show', $userID)
+                ->with('success', __('Pet created successfully'));
         } catch (Exception $exception) {
-            if ($userIDInput) {
-                return redirect()->route('pet.index')->with('error', $exception->getMessage());
-            }
-
-            return redirect()->route('user.show', $userID)->with('error', $exception->getMessage());
+            return redirect()
+                ->route('user.show', $userID)
+                ->with('error', $exception->getMessage());
         }
     }
 
@@ -98,7 +104,6 @@ class PetController extends Controller
      */
     public function show($id)
     {
-        return view('pet.show');
     }
 
     /**
@@ -115,21 +120,13 @@ class PetController extends Controller
     public function update(PetRequest $request, $id, $userID)
     {
         try {
-            $pet = Pet::findOrFail($id);
-            if (!Breed::checkValidPetType($request->breed_id, $request->pet_type)) {
-                throw new Exception(trans('breed.invalid_type'));
-            }
-
-            if (Gate::denies('update', $pet)) {
-                throw new Exception(trans('permission.update_fail'));
-            }
-
-            $data = $request->except(['_token', '_method', 'redirect_pet_index']);
-            $redirectValue = $request->input(
-                'redirect_pet_index'
+            $isActive = $request->has('is_active') ? 1 : 0;
+            $pet = $this->petRepo->updatePet(
+                $request->except(['_token', '_method', 'redirect_pet_index']),
+                $id,
+                $isActive
             );
-            $data['is_active'] = $request->has('is_active') ? 1 : 0;
-            $pet->update($data);
+            $redirectValue = $request->input('redirect_pet_index');
             uploadImg($request, 'pet_avatar', $pet);
             if ($redirectValue === 1) {
                 return redirect()->route('pet.index')->with(
@@ -138,10 +135,6 @@ class PetController extends Controller
                 );
             }
 
-            $pet->update($data);
-
-            uploadImg($request, 'pet_avatar', $pet);
-
             return redirect()->route('user.show', $userID)->with(
                 'success',
                 __('Pet updated successfully')
@@ -149,41 +142,29 @@ class PetController extends Controller
         } catch (Exception $exception) {
             if ($redirectValue === 1) {
                 return redirect()->route('pet.index')->with(
-                    'error',
-                    $exception->getMessage()
+                    'success',
+                    __('Pet updated successfully')
                 );
             }
 
-            return redirect()->route(
-                'user.show',
-                $userID
-            )->with(
-                'error',
-                $exception->getMessage()
-            );
+            return redirect()
+                ->route('user.show', $userID)
+                ->with(
+                    'success',
+                    __('Pet updated successfully')
+                );
+        } catch (Exception $exception) {
+            return redirect()
+                ->route('user.show', $userID)
+                ->with('error', $exception->getMessage());
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id, $userID)
+    public function destroy($id)
     {
         try {
-            if (Gate::denies('delete', Pet::class)) {
-                throw new Exception(trans('permission.delete_fail'));
-            }
-
-            $pet = Pet::find($id);
-            // Check if the current user is authorized to delete the pet
-            if (Gate::allows('delete', $pet)) {
-                // Authorized to delete the pet
-                DB::table('pets')->where('pet_id', $id)->delete();
-                flashMessage('success', __('Pet deleted successfully'));
-            }
+            $this->petRepo->deletePet($id);
+            flashMessage('success', __('Pet deleted successfully'));
         } catch (Exception $exception) {
             flashMessage('error', $exception->getMessage());
         }

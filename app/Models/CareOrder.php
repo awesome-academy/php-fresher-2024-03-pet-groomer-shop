@@ -93,6 +93,11 @@ class CareOrder extends Model
             );
     }
 
+    public function isCancelable()
+    {
+        return $this->order_status <= OrderStatusEnum::CONFIRMED;
+    }
+
     public function isAssignable()
     {
         return $this->order_status === OrderStatusEnum::CONFIRMED;
@@ -103,7 +108,7 @@ class CareOrder extends Model
         return array_flip(OrderStatusEnum::getTranslated());
     }
 
-    public function isCancelable()
+    public function checkCancelable()
     {
         return $this->order_status <= OrderStatusEnum::CONFIRMED;
     }

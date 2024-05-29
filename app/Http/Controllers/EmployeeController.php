@@ -3,40 +3,50 @@
 namespace App\Http\Controllers;
 
 use App\Enums\OrderStatusEnum;
-use App\Enums\RoleEnum;
 use App\Http\Requests\AssignTaskRequest;
-use App\Models\Branch;
-use App\Models\CareOrder;
-use App\Models\User;
+use App\Http\Requests\Search\EmployeeSearchRequest;
+use App\Repositories\Branch\BranchRepositoryInterface;
+use App\Repositories\CareOrder\CareOrderRepositoryInterface;
+use App\Repositories\User\UserRepositoryInterface;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 
 class EmployeeController extends Controller
 {
-    public function index(Request $request)
+    protected $userRepo;
+    protected $branchRepo;
+    protected $careOrderRepo;
+
+    public function __construct(
+        UserRepositoryInterface $userRepo,
+        BranchRepositoryInterface $branchRepo,
+        CareOrderRepositoryInterface $careOrderRepo
+    ) {
+        $this->userRepo = $userRepo;
+        $this->branchRepo = $branchRepo;
+        $this->careOrderRepo = $careOrderRepo;
+    }
+
+    public function index(EmployeeSearchRequest $request)
     {
-        $branches = Branch::pluck('branch_id', 'branch_name');
+        $branches = $this->branchRepo->getBranchOption(true);
         $conditions = formatQuery($request->query());
-        $employees = User::with('branch')
-            ->where('role_id', RoleEnum::EMPLOYEE)
-            ->where($conditions)
-            ->orderBy('created_at', 'desc')
-            ->paginate(config('constant.data_table.item_per_page'))
-            ->withQueryString();
-        $oldInput = $request->all();
-        $branches['All'] = '';
+        $employees = $this->userRepo->getEmployeeList($conditions);
 
         return view(
             'employee.index',
-            ['employees' => $employees, 'branches' => $branches, 'oldInput' => $oldInput]
+            [
+                'employees' => $employees,
+                'branches' => $branches,
+                'oldInput' => $request->all(),
+            ]
         );
     }
 
     public function assignTaskPage($userID, $branchID)
     {
-        if (!Branch::checkValid($branchID) || !User::checkValid($userID)) {
+        if (!$this->branchRepo->checkValid($branchID) || !$this->userRepo->checkValid($userID)) {
             abort(404);
         }
 
@@ -50,11 +60,8 @@ class EmployeeController extends Controller
                 'url' => route('employee.assign-task-page', ['branch' => $branchID, 'employee' => $userID]),
             ],
         ];
-        $orders = CareOrder::where('branch_id', $branchID)
-            ->with('assignTask')
-            ->orderBy('updated_at', 'desc')
-            ->paginate(config('constant.data_table.item_per_page'))->withQueryString();
-        $employee = User::findOrFail($userID);
+        $orders = $this->careOrderRepo->assignTaskList($branchID);
+        $employee = $this->userRepo->findOrFail($userID);
 
         return view(
             'employee.assign-task',
@@ -75,26 +82,8 @@ class EmployeeController extends Controller
         try {
             $fromTime = $request->from_time;
             $toTime = $request->to_time;
-            $user = User::findOrFail($userID);
-
-            if (Gate::denies('assignTask', $user)) {
-                throw new Exception(trans('permission.update_fail'));
-            }
-
-            if ($user->isAssigned($orderID)) {
-                throw new Exception(trans('employee.already_assigned'));
-            }
-
-            if ($user->isOverlappingTask($fromTime, $toTime)) {
-                throw new Exception(trans('employee.overlapping'));
-            }
-
-            $user->assignTask()->attach($orderID, ['from_time' => $fromTime, 'to_time' => $toTime]);
-
-            $order = CareOrder::findOrFail($orderID);
-            $order->order_status = OrderStatusEnum::IN_PROGRESS;
-            $order->save();
-
+            $this->userRepo->assignTask($userID, $orderID, $fromTime, $toTime);
+            $this->careOrderRepo->updateCareOrderStatus(OrderStatusEnum::IN_PROGRESS, $orderID);
             DB::commit();
 
             return redirect()->back()->with('success', trans('employee.success'));
@@ -108,15 +97,8 @@ class EmployeeController extends Controller
     public function unassignTask($userID, $orderID)
     {
         try {
-            $user = User::findOrFail($userID);
-            if (Gate::denies('unassignTask', $user)) {
-                throw new Exception(trans('permission.delete_fail'));
-            }
-
-            $user->assignTask()->detach($orderID);
-            $order = CareOrder::findOrFail($orderID);
-            $order->order_status = OrderStatusEnum::CONFIRMED;
-            $order->update();
+            $this->userRepo->unAssignTask($userID, $orderID);
+            $this->careOrderRepo->updateCareOrderStatus(OrderStatusEnum::CONFIRMED, $orderID);
 
             return redirect()->back()->with('success', trans('employee.unassign_success'));
         } catch (Exception $e) {
@@ -127,15 +109,9 @@ class EmployeeController extends Controller
     public function updateAssignTask(AssignTaskRequest $request, $userID, $orderID)
     {
         try {
-            $user = User::findOrFail($userID);
-            $user->assignTask()
-                ->updateExistingPivot(
-                    $orderID,
-                    [
-                        'from_time' => $request->from_time,
-                        'to_time' => $request->to_time,
-                    ]
-                );
+            $fromTime = $request->from_time;
+            $toTime = $request->to_time;
+            $this->userRepo->updateAssignTask($userID, $orderID, $fromTime, $toTime);
 
             return redirect()->back()->with('success', trans('employee.success'));
         } catch (Exception $e) {

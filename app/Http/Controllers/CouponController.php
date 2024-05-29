@@ -3,24 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CouponRequest;
-use App\Models\Coupon;
-use App\Models\User;
+use App\Repositories\Coupon\CouponRepositoryInterface;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 
 class CouponController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    protected $couponRepo;
+
+    public function __construct(CouponRepositoryInterface $couponRepo)
+    {
+        $this->couponRepo = $couponRepo;
+    }
+
     public function index()
     {
-        $coupons = Coupon::paginate(10)->withQueryString();
+        $coupons = $this->couponRepo->getCouponList();
 
         return view('coupons.index', ['coupons' => $coupons]);
     }
@@ -38,15 +37,8 @@ class CouponController extends Controller
     public function store(CouponRequest $request)
     {
         try {
-            if (Gate::denies('create', User::class)) {
-                throw new Exception(trans('coupon.create_error'));
-            }
-
-            $coupon = new Coupon();
-            $coupon->fill($request->all());
-            $coupon->created_by = Auth::user()->user_id;
-            $coupon->is_active  = $request->has('is_active') ? 1 : 0;
-            $coupon->save();
+            $isActive = $request->has('is_active') ? 1 : 0;
+            $this->couponRepo->storeCoupon($request->all(), $isActive);
 
             return redirect()->route('coupon.index')->with('success', __('coupon.create_success'));
         } catch (Exception $e) {
@@ -68,7 +60,7 @@ class CouponController extends Controller
     public function edit($id)
     {
         try {
-            $coupon = Coupon::findOrFail($id);
+            $coupon = $this->couponRepo->findOrFail($id);
 
             return view('coupons.edit', ['coupon' => $coupon]);
         } catch (ModelNotFoundException $exception) {
@@ -86,14 +78,8 @@ class CouponController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $coupon = Coupon::findOrFail($id);
-            if (Gate::denies('update', $coupon)) {
-                throw new Exception(trans('coupon.update_error'));
-            }
-
-            $coupon->fill($request->all());
-            $coupon->is_active  = $request->has('is_active') ? 1 : 0;
-            $coupon->save();
+            $isActive = $request->has('is_active') ? 1 : 0;
+            $this->couponRepo->updateCoupon($request->all(), $isActive, $id);
 
             return redirect()->route('coupon.index')->with('success', __('coupon.update_success'));
         } catch (ModelNotFoundException $exception) {
@@ -110,12 +96,7 @@ class CouponController extends Controller
     public function destroy($id)
     {
         try {
-            $coupon = Coupon::findOrFail($id);
-            if (Gate::denies('delete', $coupon)) {
-                throw new Exception(trans('coupon.delete_error'));
-            }
-
-            $coupon->delete();
+            $this->couponRepo->deleteCoupon($id);
             flashMessage('success', __('coupon.delete_success'));
         } catch (Exception $exception) {
             flashMessage('error', $exception->getMessage());
