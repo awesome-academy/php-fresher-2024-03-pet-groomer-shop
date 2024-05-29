@@ -60,6 +60,8 @@ class CareOrderRepository extends BaseRepository implements CareOrderRepositoryI
 
         $careOrder->order_status = OrderStatusEnum::CANCELLED;
         $careOrder->update();
+
+        return $careOrder;
     }
 
     public function updateCareOrderStatus($orderStatus, $id)
@@ -74,6 +76,8 @@ class CareOrderRepository extends BaseRepository implements CareOrderRepositoryI
         if ($orderStatus === OrderStatusEnum::COMPLETED) {
             $careOrder->update(['returned_date' => now()]);
         }
+
+        return $careOrder;
     }
 
     public function assignTaskList($branchID)

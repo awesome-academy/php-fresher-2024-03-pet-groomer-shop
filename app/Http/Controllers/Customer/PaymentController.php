@@ -6,6 +6,7 @@ use App\Enums\OrderStatusEnum;
 use App\Enums\PaymentMethodEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PaymentRequest;
+use App\Jobs\SendPaymentSuccessEmail;
 use App\Repositories\CareOrder\CareOrderRepositoryInterface;
 use App\Repositories\Coupon\CouponRepositoryInterface;
 use App\Repositories\HotelService\HotelServiceRepositoryInterface;
@@ -125,6 +126,10 @@ class PaymentController extends Controller
             $this->attachPetService($order, $petServices);
             $this->setHotelService($order);
             DB::commit();
+
+            SendPaymentSuccessEmail::dispatch($order, getUser()->user_email);
+
+            session()->forget(['petServicePrice', 'careOrder', 'hotelServicePrice']);
 
             return response()
                 ->json([
