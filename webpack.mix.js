@@ -25,7 +25,10 @@ mix.js(
         "resources/js/payment.js",
         "resources/js/branch.js",
         'resources/js/care-order-history.js',
-        'resources/js/image.js'
+        'resources/js/image.js',
+        "resources/js/notification.js",
+        "node_modules/pusher-js/dist/web/pusher.min.js",
+        "node_modules/pusher-js/dist/web/pusher.js",
     ],
     "public/js/app.js"
 )
@@ -33,6 +36,7 @@ mix.js(
         require("tailwindcss"),
         require("autoprefixer"),
     ])
+    .postCss("node_modules/toastr/build/toastr.min.css", "public/css")
     .sass("resources/css/confirm-page.scss", "public/css");
 
 mix.disableNotifications();

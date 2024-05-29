@@ -13,6 +13,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PetController;
 use App\Http\Controllers\PetServiceController;
 use App\Http\Controllers\PetServicePriceController;
@@ -50,6 +51,15 @@ Route::prefix('/customer')->group(function () {
 
         Route::resource('customer.pet', CustomerPetController::class)->names('customer-pet');
         Route::resource('care-order-history', CareOrderHistoryController::class)->names('care-order-history');
+
+        Route::get(
+            '/notification/unread',
+            [NotificationController::class, 'getUnreadNotification']
+        )->name('notification.unread');
+        Route::post(
+            '/notification/mark-as-read/{id}',
+            [NotificationController::class, 'markAsRead']
+        )->name('notification.mark-as-read');
     });
 });
 

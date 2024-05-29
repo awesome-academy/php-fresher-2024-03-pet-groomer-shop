@@ -75,7 +75,9 @@ const payment = {
                     payment.displayCoupon(data);
                     return;
                 }
-                window.location.href = data.url;
+                if (data.url) {
+                    window.location.href = data.url;
+                }
             },
         });
     },
@@ -95,5 +97,10 @@ window.$(document).ready(function () {
     window.$("#payment-form").on("submit", function (event) {
         event.preventDefault();
         payment.pay(window.$(this).serialize());
+    });
+
+    window.Echo.channel("payments").listen("PaymentProcessed", (e) => {
+        console.log("Payment processed:", e.payment);
+        // Here you can display a real-time notification to the management
     });
 });
