@@ -16,7 +16,7 @@
                         @method('PUT')
                         @csrf
                         <div class="col-span-12">
-                            <x-show-image :path="$user->image->image_path" id="user_avatar" :label="__('Avatar')" />
+                            <x-show-image :path="$user->image->image_path ?? ''" id="user_avatar" :label="__('Avatar')" />
                         </div>
                         <!-- First Name -->
                         <div class="col-span-6">

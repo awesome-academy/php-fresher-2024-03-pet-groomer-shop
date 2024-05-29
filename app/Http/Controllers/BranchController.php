@@ -3,15 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\BranchRequest;
-use App\Models\Branch;
+use App\Repositories\Branch\BranchRepositoryInterface;
 use Exception;
-use Illuminate\Support\Facades\Gate;
 
 class BranchController extends Controller
 {
+    protected $branchRepo;
+
+    public function __construct(BranchRepositoryInterface $branchRepo)
+    {
+        $this->branchRepo = $branchRepo;
+    }
+
     public function index()
     {
-        $branches = Branch::paginate(config('constant.data_table.item_per_page'));
+        $branches = $this->branchRepo->getBranchList();
 
         return view('branch.index', ['branches' => $branches]);
     }
@@ -29,15 +35,7 @@ class BranchController extends Controller
     public function store(BranchRequest $request)
     {
         try {
-            if (Gate::denies('create', Branch::class)) {
-                throw new Exception(trans('permission.create_fail'));
-            }
-
-            $branch = new Branch();
-
-            $branch->fill($request->all());
-            $branch->created_by = getUser()->user_id;
-            $branch->save();
+            $this->branchRepo->storeBranch($request->all());
 
             return redirect()->route('branch.index')->with('success', trans('branch.create_success'));
         } catch (Exception $e) {
@@ -73,7 +71,7 @@ class BranchController extends Controller
         ];
 
         try {
-            $branch = Branch::findOrFail($id);
+            $branch = $this->branchRepo->findOrFail($id);
 
             return view(
                 'branch.edit',
@@ -90,14 +88,7 @@ class BranchController extends Controller
     public function update(BranchRequest $request, $id)
     {
         try {
-            $branch = Branch::findOrFail($id);
-
-            if (Gate::denies('update', $branch)) {
-                throw new Exception(trans('permission.update_fail'));
-            }
-
-            $branch->fill($request->all());
-            $branch->update();
+            $this->branchRepo->updateBranch($request->all(), $id);
 
             return redirect()
                 ->route('branch.index')
@@ -115,12 +106,7 @@ class BranchController extends Controller
     public function destroy($id)
     {
         try {
-            $branch = Branch::findOrFail($id);
-            if (Gate::denies('delete', $branch)) {
-                throw new Exception(trans('permission.delete_fail'));
-            }
-
-            $branch->delete();
+            $this->branchRepo->deleteBranch($id);
             flashMessage('success', trans('breed.delete_success'));
         } catch (Exception $e) {
             flashMessage('error', $e->getMessage());

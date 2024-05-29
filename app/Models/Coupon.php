@@ -37,24 +37,4 @@ class Coupon extends Model
     {
         return formatNumber($this->coupon_price, 'VND');
     }
-
-    public static function getCoupon(string $code)
-    {
-        try {
-            $coupon = self::where('coupon_code', trim($code))->first();
-            if ($coupon) {
-                // Check if the coupon has expired
-                $expiryDate = Carbon::parse($coupon->expiry_date);
-                if ($expiryDate->isPast()) {
-                    return 'expired';
-                }
-
-                return $coupon;
-            }
-
-            return 'not_found';
-        } catch (\Exception $e) {
-            return $e->getMessage();
-        }
-    }
 }

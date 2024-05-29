@@ -3,22 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PetServiceRequest;
-use App\Models\PetService;
-use App\Models\User;
+use App\Repositories\PetService\PetServiceRepositoryInterface;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\Gate;
 
 class PetServiceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    protected $petServiceRepo;
+
+    public function __construct(PetServiceRepositoryInterface $petServiceRepo)
+    {
+        $this->petServiceRepo = $petServiceRepo;
+    }
+
     public function index()
     {
-        $petServices = PetService::paginate(config('constant.data_table.item_per_page'));
+        $petServices = $this->petServiceRepo->getServiceList();
 
         return view('pet-service.index', ['petServices' => $petServices]);
     }
@@ -38,13 +38,7 @@ class PetServiceController extends Controller
     public function store(PetServiceRequest $request)
     {
         try {
-            if (Gate::denies('create', User::class)) {
-                throw new Exception(trans('permission.create_fail'));
-            }
-
-            $petService = new PetService();
-            $petService->fill($request->all());
-            $petService->save();
+            $this->petServiceRepo->storeService($request->all());
 
             return redirect()
                 ->route('pet-service.index')
@@ -70,7 +64,7 @@ class PetServiceController extends Controller
     public function edit($id)
     {
         try {
-            $petService = PetService::findOrFail($id);
+            $petService = $this->petServiceRepo->findOrFail($id);
             $breadcrumbItems = [
                 ['text' => trans('pet-service.pet_service'), 'url' => route('pet-service.index')],
                 ['text' => trans('pet-service.update'), 'url' => route('pet-service.edit', $id)],
@@ -88,13 +82,7 @@ class PetServiceController extends Controller
     public function update(PetServiceRequest $request, $id)
     {
         try {
-            $petService = PetService::findOrFail($id);
-
-            if (Gate::denies('update', $petService)) {
-                throw new Exception(trans('permission.update_fail'));
-            }
-
-            $petService->update($request->all());
+            $this->petServiceRepo->updateService($request->all(), $id);
 
             return redirect()
                 ->route('pet-service.index')
@@ -115,14 +103,7 @@ class PetServiceController extends Controller
     public function destroy($id)
     {
         try {
-            $petService = PetService::findOrFail($id);
-            if (Gate::denies('delete', $petService)) {
-                flashMessage('error', trans('permission.delete_fail'));
-
-                throw new Exception(trans('permission.delete_fail'));
-            }
-
-            $petService->delete();
+            $this->petServiceRepo->deleteService($id);
             flashMessage('success', trans('pet-service.delete_success'));
         } catch (ModelNotFoundException $e) {
             abort(404);

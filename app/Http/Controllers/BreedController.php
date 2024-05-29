@@ -4,21 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Enums\PetTypeEnum;
 use App\Http\Requests\BreedRequest;
-use App\Models\Breed;
-use App\Models\User;
+use App\Repositories\Breed\BreedRepositoryInterface;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 
 class BreedController extends Controller
 {
-    public function index(Request $request)
+    protected $breedRepo;
+
+    public function __construct(BreedRepositoryInterface $breedRepo)
     {
-        $conditions = formatQuery($request->query());
-        $breeds = Breed::where($conditions)
-            ->orderBy('breed_type')
-            ->paginate(config('constant.data_table.item_per_page'));
+        $this->breedRepo = $breedRepo;
+    }
+
+    public function index()
+    {
+        $breeds = $this->breedRepo->getBreedList();
 
         return view('breed.index', ['breeds' => $breeds]);
     }
@@ -43,17 +44,7 @@ class BreedController extends Controller
     public function store(BreedRequest $request)
     {
         try {
-            if (Breed::checkValidName($request)) {
-                throw new Exception(trans('breed.name_duplicate'));
-            }
-
-            if (Gate::denies('create', User::class)) {
-                throw new Exception(trans('permission.create_fail'));
-            }
-
-            $breed = new Breed();
-            $breed->fill($request->all());
-            $breed->save();
+            $this->breedRepo->storeBreed($request->all());
 
             return redirect()->route('breed.index')->with('success', trans('breed.create_success'));
         } catch (\Exception $e) {
@@ -75,12 +66,11 @@ class BreedController extends Controller
     public function edit($id)
     {
         try {
-            $breed = Breed::findOrFail($id);
             $breadcrumbItems = [
                 ['text' => trans('breed.breed'), 'url' => route('breed.index')],
-                ['text' => trans('breed.update'), 'url' => route('breed.edit', ['breed' => $breed->breed_id])],
+                ['text' => trans('breed.update'), 'url' => ''],
             ];
-
+            $breed = $this->breedRepo->findOrFail($id);
             $petTypeOptions = $this->getPetTypeOptions();
 
             return view(
@@ -99,17 +89,7 @@ class BreedController extends Controller
     public function update(BreedRequest $request, $id)
     {
         try {
-            if (Breed::checkValidNameUpdate($request, $id)) {
-                throw new Exception(trans('breed.name_duplicate'));
-            }
-
-            $breed = Breed::findOrFail($id);
-            if (Gate::denies('update', $breed)) {
-                throw new Exception(trans('permission.update_fail'));
-            }
-
-            $breed->fill($request->all());
-            $breed->update();
+            $this->breedRepo->updateBreed($request->all(), $id);
 
             return redirect()->route('breed.index')->with('success', trans('breed.update_success'));
         } catch (Exception $e) {
@@ -120,12 +100,7 @@ class BreedController extends Controller
     public function destroy($id)
     {
         try {
-            $breed = Breed::findOrFail($id);
-            if (Gate::denies('delete', $breed)) {
-                throw new Exception(trans('permission.delete_fail'));
-            }
-
-            $breed->delete();
+            $this->breedRepo->deleteBreed($id);
             flashMessage('success', trans('breed.delete_success'));
         } catch (Exception $e) {
             flashMessage('error', $e->getMessage());

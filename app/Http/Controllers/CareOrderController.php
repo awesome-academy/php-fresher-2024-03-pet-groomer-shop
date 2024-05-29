@@ -4,40 +4,38 @@ namespace App\Http\Controllers;
 
 use App\Enums\OrderStatusEnum;
 use App\Http\Requests\CareOrderManageRequest;
-use App\Models\Branch;
-use App\Models\CareOrder;
-use App\Models\CareOrderDetail;
+use App\Repositories\Branch\BranchRepositoryInterface;
+use App\Repositories\CareOrder\CareOrderRepositoryInterface;
+use App\Repositories\CareOrderDetail\CareOrderDetailRepositoryInterface;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class CareOrderController extends Controller
 {
+    protected $careOrderRepo;
+    protected $careOrderDetailRepo;
+
+    protected $branchRepo;
+
+    public function __construct(
+        CareOrderRepositoryInterface $careOrderRepo,
+        BranchRepositoryInterface $branchRepo,
+        CareOrderDetailRepositoryInterface $careOrderDetailRepo
+    ) {
+        $this->careOrderRepo = $careOrderRepo;
+        $this->branchRepo = $branchRepo;
+        $this->careOrderDetailRepo = $careOrderDetailRepo;
+    }
+
     public function index(CareOrderManageRequest $request)
     {
         $conditions = formatQuery($request->query());
-        $careOrders = CareOrder::with([
-            'pet',
-            'user',
-            'assignTask',
-            'branch',
-            'coupon',
-            'hotelService',
-            'careOrderDetail',
-            'petServices',
-        ])
-            ->where($conditions)
-            ->paginate(config('constant.data_table.care_order_page'));
-        $orderStatusOptions = CareOrder::getStatusOptions();
-        $extraOrderStatusOptions = $orderStatusOptions;
-        $extraOrderStatusOptions[__('All')] = '';
-
-        $branchOptions = Branch::pluck('branch_id', 'branch_name');
-        $branchOptions[__('All')] = '';
-        $oldInput = $request->all();
+        $careOrders = $this->careOrderRepo->getCareOrderList($conditions);
+        [$orderStatusOptions, $extraOrderStatusOptions] = $this->careOrderRepo->getCareOrderOption();
+        $branchOptions = $this->branchRepo->getBranchOption(true);
 
         return view(
             'care-order.index',
@@ -46,7 +44,7 @@ class CareOrderController extends Controller
                 'orderStatusOptions' => $orderStatusOptions,
                 'extraOrderStatusOptions' => $extraOrderStatusOptions,
                 'branchOptions' => $branchOptions,
-                'oldInput' => $oldInput,
+                'oldInput' => $request->all(),
             ]
         );
     }
@@ -89,18 +87,9 @@ class CareOrderController extends Controller
                 ],
             ];
 
-            $careOrder = CareOrder::with([
-                'careOrderDetail',
-                'hotelService',
-                'pet',
-                'petServices',
-                'coupon',
-                'assignTask',
-            ])
-                ->findOrFail($id);
+            $careOrder = $this->careOrderRepo->getCareOrder($id);
 
-            $petServicePrice = CareOrderDetail::where('order_id', $id)
-                ->sum('pet_service_price');
+            $petServicePrice = $this->careOrderDetailRepo->getPetServicePrice($id);
 
             return view(
                 'care-order.show',
@@ -144,12 +133,8 @@ class CareOrderController extends Controller
                 flashMessage('error', trans('care-order.update_fail'));
             }
 
-            $careOrder = CareOrder::findOrFail($id);
-            if (Gate::denies('update', $careOrder)) {
-                throw new Exception(trans('permission.update_fail'));
-            }
-
-            $careOrder = $careOrder->update(['order_status' => $request->input('order_status')]);
+            $orderStatus = (int) $request->input('order_status');
+            $this->careOrderRepo->updateCareOrderStatus($orderStatus, $id);
 
             flashMessage('success', trans('care-order.update_success'));
         } catch (Exception $e) {

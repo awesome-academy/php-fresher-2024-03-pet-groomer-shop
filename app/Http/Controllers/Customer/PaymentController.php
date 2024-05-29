@@ -6,12 +6,12 @@ use App\Enums\OrderStatusEnum;
 use App\Enums\PaymentMethodEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PaymentRequest;
-use App\Models\CareOrder;
-use App\Models\Coupon;
-use App\Models\HotelService;
-use App\Models\Pet;
-use App\Models\PetService;
-use App\Models\PetServicePrice;
+use App\Repositories\CareOrder\CareOrderRepositoryInterface;
+use App\Repositories\Coupon\CouponRepositoryInterface;
+use App\Repositories\HotelService\HotelServiceRepositoryInterface;
+use App\Repositories\Pet\PetRepositoryInterface;
+use App\Repositories\PetService\PetServiceRepositoryInterface;
+use App\Repositories\PetServicePrice\PetServicePriceRepositoryInterface;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -20,6 +20,30 @@ use Illuminate\Support\Facades\Validator;
 
 class PaymentController extends Controller
 {
+    protected $couponRepo;
+    protected $petRepo;
+    protected $petServiceRepo;
+    protected $petServicePriceRepo;
+
+    protected $hotelServiceRepo;
+    protected $careOrderRepo;
+
+    public function __construct(
+        CouponRepositoryInterface $couponRepo,
+        PetRepositoryInterface $petRepo,
+        PetServiceRepositoryInterface $petServiceRepo,
+        PetServicePriceRepositoryInterface $petServicePriceRepo,
+        HotelServiceRepositoryInterface $hotelServiceRepo,
+        CareOrderRepositoryInterface $careOrderRepo
+    ) {
+        $this->couponRepo = $couponRepo;
+        $this->petRepo = $petRepo;
+        $this->petServiceRepo = $petServiceRepo;
+        $this->petServicePriceRepo = $petServicePriceRepo;
+        $this->hotelServiceRepo = $hotelServiceRepo;
+        $this->careOrderRepo = $careOrderRepo;
+    }
+
     public function index($petID)
     {
         try {
@@ -33,7 +57,7 @@ class PaymentController extends Controller
                 ['text' => trans('care-order.request'), 'url' => route('care-order.request-page', ['pet' => $petID])],
                 ['text' => trans('payment.payment'), 'url' => route('payment.index', ['pet' => $petID])],
             ];
-            $pet = Pet::findOrFail($petID);
+            $pet = $this->petRepo->findOrFail($petID);
             $petServices = $this->getPetService($pet);
             $hotel = $this->getHotelPrice();
             $totalPrice = $this->getTotalPrice($pet);
@@ -61,7 +85,7 @@ class PaymentController extends Controller
             return response()->json(['errors' => $validatedData->errors()]);
         }
 
-        $coupon = Coupon::getCoupon($request->query('coupon_code'));
+        $coupon = $this->couponRepo->getCoupon($request->query('coupon_code'));
 
         return response()->json($coupon);
     }
@@ -86,7 +110,7 @@ class PaymentController extends Controller
     {
         DB::beginTransaction();
         try {
-            $pet = Pet::findOrFail($petID);
+            $pet = $this->petRepo->findOrFail($petID);
             if (!$pet->checkOwner()) {
                 throw new \Exception(trans('pet.not_found'));
             }
@@ -94,7 +118,7 @@ class PaymentController extends Controller
             $petServices = session('petServicePrice') ?? [];
             $coupon = null;
             if (isset($request->coupon_code)) {
-                $coupon = Coupon::where('coupon_code', $request->coupon_code)->first();
+                $coupon = $this->couponRepo->getCoupon($request->coupon_code);
             }
 
             $order = $this->createOrder($request, $pet, $coupon);
@@ -170,9 +194,9 @@ class PaymentController extends Controller
         $careOrder = session('careOrder');
         $totalPrice = 0;
         if (isset($careOrder['pet_service_id'])) {
-            $petServices = PetService::findMany($careOrder['pet_service_id']);
+            $petServices = $this->petServiceRepo->findMany($careOrder['pet_service_id']);
             foreach ($petServices as $petService) {
-                $petService->price = PetServicePrice::getPriceByWeight($petService
+                $petService->price = $this->petServicePriceRepo->getPriceByWeight($petService
                     ->pet_service_id, $pet
                     ->pet_weight);
             }
@@ -238,7 +262,7 @@ class PaymentController extends Controller
         $careOrder = session('careOrder');
         $hotelPrice = session('hotelPrice');
         if (isset($careOrder['from_datetime']) && isset($hotelPrice)) {
-            HotelService::create([
+            $this->hotelServiceRepo->create([
                 'from_datetime' => $careOrder['from_datetime'],
                 'to_datetime' => $careOrder['to_datetime'],
                 'hotel_price' => $hotelPrice,
@@ -284,6 +308,6 @@ class PaymentController extends Controller
             $data['returned_date'] = $careOrder['to_datetime'];
         }
 
-        return CareOrder::create($data);
+        return $this->careOrderRepo->create($data);
     }
 }

@@ -4,13 +4,20 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
-use App\Models\User;
+use App\Repositories\User\UserRepositoryInterface;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CustomerProfileController extends Controller
 {
+    protected $userRepo;
+
+    public function __construct(UserRepositoryInterface $userRepo)
+    {
+        $this->userRepo = $userRepo;
+    }
+
     public function index()
     {
         $user = Auth::user();
@@ -65,11 +72,7 @@ class CustomerProfileController extends Controller
     {
         try {
             $data = $request->except(['user_email', 'username', 'user_password']);
-            $user = User::getUserByID($id);
-            $user->fill($data);
-
-            $user->update();
-
+            $user = $this->userRepo->updateProfile($data, $id);
             uploadImg($request, 'user_avatar', $user);
 
             return redirect()->route('customer-profile.index')->with('success', __('User updated successfully'));

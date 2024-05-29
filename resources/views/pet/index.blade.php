@@ -43,11 +43,13 @@
                                         {{ $pet->is_active ? ' text-green-500' : ' text-red-500' }}">
                                         {{ $pet->is_active_name }}</td>
                                     <td class="whitespace-nowrap px-6 py-4">
+                                        @isset($pet->user->user_id)
+                                            <a class="text-indigo-600"
+                                                href="{{ route('user.show', $pet->user->user_id) }}">
+                                                {{ $pet->user->user_email }}
+                                            </a>
+                                        @endisset
 
-                                        <a class="text-indigo-600"
-                                            href="{{ route('user.show', $pet->user->user_id) }}">
-                                            {{ $pet->user->user_email }}
-                                        </a>
                                     </td>
 
                                     <td class="whitespace-nowrap px-6 py-4 flex gap-2">

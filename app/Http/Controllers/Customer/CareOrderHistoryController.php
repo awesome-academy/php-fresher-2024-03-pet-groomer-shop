@@ -2,29 +2,36 @@
 
 namespace App\Http\Controllers\Customer;
 
-use App\Enums\OrderStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Search\CareOrderHistorySearchRequest;
-use App\Models\CareOrder;
-use App\Models\CareOrderDetail;
-use App\Models\Pet;
+use App\Repositories\CareOrder\CareOrderRepositoryInterface;
+use App\Repositories\CareOrderDetail\CareOrderDetailRepositoryInterface;
+use App\Repositories\Pet\PetRepositoryInterface;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class CareOrderHistoryController extends Controller
 {
+    protected $careOrderRepo;
+    protected $petRepo;
+    protected $careOrderDetailRepo;
+
+    public function __construct(
+        CareOrderRepositoryInterface $careOrderRepo,
+        PetRepositoryInterface $petRepo,
+        CareOrderDetailRepositoryInterface $careOrderDetailRepo
+    ) {
+        $this->careOrderRepo = $careOrderRepo;
+        $this->$petRepo = $petRepo;
+        $this->$careOrderDetailRepo = $careOrderDetailRepo;
+    }
+
     public function index(CareOrderHistorySearchRequest $request)
     {
         $conditions = formatQuery($request->query());
-        $careOrders = CareOrder::where('user_id', getUser()->user_id)
-            ->where($conditions)
-            ->with(['careOrderDetail', 'hotelService', 'pet', 'branch']);
-        $careOrders = searchDate($careOrders, 'order_received_date', $request->query('order_received_date'));
-        $careOrders = $careOrders
-            ->orderBy('created_at', 'desc')
-            ->paginate(config('constant.data_table.order_history_page'));
-        $petOptions = Pet::getPetOptions(true);
+        $careOrders = $this->careOrderRepo->getCareOrderHistory($conditions);
+        $petOptions = $this->petRepo->getPetOptionsFromDB(true);
         $oldInput = $request->all();
 
         return view(
@@ -72,10 +79,9 @@ class CareOrderHistoryController extends Controller
                 ],
             ];
 
-            $careOrder = CareOrder::with(['careOrderDetail', 'hotelService', 'pet', 'petServices', 'coupon'])
-                ->findOrFail($id);
+            $careOrder = $this->careOrderRepo->getCareOrder($id);
 
-            $petServicePrice = CareOrderDetail::where('order_id', $id)->sum('pet_service_price');
+            $petServicePrice = $this->careOrderDetailRepo->getSumPrice($id);
 
             return view(
                 'customer.care-order-history.show',
@@ -104,13 +110,7 @@ class CareOrderHistoryController extends Controller
     public function update(Request $request, $orderID)
     {
         try {
-            $careOrder = CareOrder::findOrFail($orderID);
-            if (!$careOrder->checkOwner()) {
-                throw new Exception(trans('care-order.update_fail'));
-            }
-
-            $careOrder->order_status = OrderStatusEnum::CANCELLED;
-            $careOrder->update();
+            $this->careOrderRepo->updateOrderStatusForCustomer($orderID);
 
             return response()->json(['message' => trans('care-order.update_success')]);
         } catch (Exception $e) {

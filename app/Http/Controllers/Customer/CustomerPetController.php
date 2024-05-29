@@ -6,28 +6,38 @@ use App\Enums\PetTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PetRequest;
 use App\Http\Requests\Search\PetSearchRequest;
-use App\Models\Breed;
-use App\Models\Pet;
-use App\Models\Role;
+use App\Repositories\Breed\BreedRepositoryInterface;
+use App\Repositories\Pet\PetRepositoryInterface;
+use App\Repositories\Role\RoleRepositoryInterface;
 
 class CustomerPetController extends Controller
 {
+    protected $petRepo;
+    protected $breedRepo;
+    protected $roleRepo;
+
+    public function __construct(
+        PetRepositoryInterface $petRepo,
+        BreedRepositoryInterface $breedRepo,
+        RoleRepositoryInterface $roleRepo
+    ) {
+        $this->breedRepo = $breedRepo;
+        $this->$petRepo = $petRepo;
+        $this->$roleRepo = $roleRepo;
+    }
+
     public function index(PetSearchRequest $request)
     {
         $conditions = formatQuery($request->query());
-        $pets = Pet::with(['user', 'breed'])
-            ->where($conditions)
-            ->where('user_id', auth()->user()->user_id)
-            ->paginate(config('constant.data_table.item_per_page'));
-        $oldInput = $request->all();
-        $breeds = Breed::pluck('breed_id', 'breed_name');
+        $pets = $this->petRepo->getPetCustomerList($conditions);
+        $breeds = $this->breedRepo->getBreedOption();
         [$petTypesSelected, $petTypesSelectedExtra] = $this->getPetTypeOptions();
 
         return view('customer.pet.index', [
             'pets' => $pets,
             'breeds' => $breeds,
             'petTypesSelected' => $petTypesSelected,
-            'oldInput' => $oldInput,
+            'oldInput' => $request->all(),
             'petTypesSelectedExtra' => $petTypesSelectedExtra,
         ]);
     }
@@ -53,8 +63,8 @@ class CustomerPetController extends Controller
 
         $petTypes = PetTypeEnum::getTranslated();
         $petTypesSelected = array_flip($petTypes);
-        $breeds = Breed::pluck('breed_id', 'breed_name');
-        $roles = Role::pluck('role_id', 'role_name');
+        $breeds = $this->breedRepo->getBreedOption();
+        $roles = $this->roleRepo->getRoleOption();
 
         return view('customer.pet.create', [
             'breeds' => $breeds,
@@ -68,16 +78,13 @@ class CustomerPetController extends Controller
     public function store(PetRequest $request, $customerID)
     {
         try {
-            if (!Breed::checkValidPetType($request->breed_id, $request->pet_type)) {
+            if (!$this->breedRepo->checkValidPetType($request->breed_id, $request->pet_type)) {
                 throw new \Exception(__('breed.invalid_type'));
             }
 
-            $pet = new Pet();
-            $pet->fill($request->all());
-            $pet->user_id = $customerID;
-            $pet->is_active = $request->has('is_active') ? 1 : 0;
+            $isActive = $request->has('is_active') ? 1 : 0;
+            $pet = $this->petRepo->storeCustomer($request->all(), $customerID, $isActive);
 
-            $pet->save();
             uploadImg($request, 'pet_avatar', $pet);
 
             return redirect()
@@ -121,14 +128,12 @@ class CustomerPetController extends Controller
     public function update(PetRequest $request, $customerID, $petID)
     {
         try {
-            if (!Breed::checkValidPetType($request->breed_id, $request->pet_type)) {
+            if (!$this->breedRepo->checkValidPetType($request->breed_id, $request->pet_type)) {
                 throw new \Exception(__('breed.invalid_type'));
             }
 
-            $pet = Pet::findOrFail($petID);
-            $pet->fill($request->all());
-            $pet->is_active = $request->has('is_active') ? 1 : 0;
-            $pet->update();
+            $isActive = $request->has('is_active') ? 1 : 0;
+            $pet = $this->petRepo->updatePetCustomer($request->all(), $petID, $isActive);
             uploadImg($request, 'pet_avatar', $pet);
 
             return redirect()
@@ -150,8 +155,7 @@ class CustomerPetController extends Controller
     public function destroy($customerID, $petID)
     {
         try {
-            $pet = Pet::findOrFail($petID);
-            $pet->delete();
+            $this->petRepo->delete($petID);
             flashMessage('success', __('Pet deleted successfully'));
         } catch (\Exception $e) {
             flashMessage('error', $e->getMessage());
