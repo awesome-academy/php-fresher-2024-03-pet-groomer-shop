@@ -11,6 +11,10 @@
                 <div class="p-6 bg-white border-b border-gray-200">
                     @manager
                         @include('dashboard.includes.dashboard-revenue')
+                        <div class="md:grid grid-cols-12 gap-3 flex flex-wrap mt-10">
+                            @include('dashboard.includes.pie-chart')
+                            @include('dashboard.includes.bar-chart')
+                        </div>
                     @endmanager
 
                 </div>

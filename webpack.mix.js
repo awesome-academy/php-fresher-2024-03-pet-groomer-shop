@@ -24,11 +24,14 @@ mix.js(
         "resources/js/care-order.js",
         "resources/js/payment.js",
         "resources/js/branch.js",
-        'resources/js/care-order-history.js',
-        'resources/js/image.js',
+        "resources/js/care-order-history.js",
+        "resources/js/image.js",
         "resources/js/notification.js",
         "node_modules/pusher-js/dist/web/pusher.min.js",
         "node_modules/pusher-js/dist/web/pusher.js",
+        "node_modules/toastr/build/toastr.min.js",
+        "resources/js/pie-chart.js",
+        "resources/js/bar-chart.js",
     ],
     "public/js/app.js"
 )

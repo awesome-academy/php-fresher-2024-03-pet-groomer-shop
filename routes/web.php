@@ -67,6 +67,15 @@ Route::middleware(['auth', 'not.customer'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])
         ->name('dashboard');
 
+    Route::get(
+        '/dashboard/show-pet-service-usage',
+        [DashboardController::class, 'showPetServiceUsage']
+    )->name('dashboard.show-pet-service-usage');
+    Route::get(
+        '/dashboard/monthly-revenue',
+        [DashboardController::class, 'showMonthlyRevenue']
+    )->name('dashboard.monthly-revenue');
+
     Route::resource('user', UserController::class)->names('user');
 
     Route::resource('branch', BranchController::class)->names('branch');
