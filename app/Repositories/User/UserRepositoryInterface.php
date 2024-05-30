@@ -33,4 +33,6 @@ interface UserRepositoryInterface extends RepositoryInterface
     public function updateAssignTask($userID, $orderID, $fromDate, $toDate);
 
     public function updateProfile($data, $id);
+
+    public function getUserByEmail($email);
 }
