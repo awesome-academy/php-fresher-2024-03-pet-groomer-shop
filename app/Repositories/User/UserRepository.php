@@ -194,4 +194,9 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         $user->fill($data);
         $user->update();
     }
+
+    public function getUserByEmail($email)
+    {
+        return $this->model->where('email', $email)->first();
+    }
 }
