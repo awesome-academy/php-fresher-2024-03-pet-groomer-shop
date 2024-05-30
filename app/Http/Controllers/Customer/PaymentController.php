@@ -7,6 +7,7 @@ use App\Enums\PaymentMethodEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PaymentRequest;
 use App\Jobs\SendPaymentSuccessEmail;
+use App\Notifications\PaymentPaidNotification;
 use App\Repositories\CareOrder\CareOrderRepositoryInterface;
 use App\Repositories\Coupon\CouponRepositoryInterface;
 use App\Repositories\HotelService\HotelServiceRepositoryInterface;
@@ -128,7 +129,7 @@ class PaymentController extends Controller
             DB::commit();
 
             SendPaymentSuccessEmail::dispatch($order, getUser()->user_email);
-
+            $order->user->notify(new PaymentPaidNotification($order));
             session()->forget(['petServicePrice', 'careOrder', 'hotelServicePrice']);
 
             return response()

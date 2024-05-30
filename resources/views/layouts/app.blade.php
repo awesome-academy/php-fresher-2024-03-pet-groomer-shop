@@ -13,6 +13,7 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/toastr.min.css') }}">
 
     <!-- Scripts -->
     @include('layouts.includes.script')

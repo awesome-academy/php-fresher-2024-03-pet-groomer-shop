@@ -21,6 +21,7 @@
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ml-6">
                 <div class="flex items-center gap-2 mr-2">
+
                     <a href="{{ route('language.set', ['lang' => 'vi']) }}">
                         <img class="w-5" src="https://purecatamphetamine.github.io/country-flag-icons/3x2/VN.svg"
                             alt="Vietnam flag">
